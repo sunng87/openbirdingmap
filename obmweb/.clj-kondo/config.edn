@@ -1,0 +1,15 @@
+{:lint-as {day8.re-frame.tracing/defn-traced clojure.core/defn
+           day8.re-frame.tracing/fn-traced clojure.core/fn}
+ :linters {:unresolved-symbol {:exclude [goog.DEBUG]}
+           :unused-namespace {:exclude [cljs.repl]}
+           :unused-referred-var {:exclude {cljs.repl [Error->map
+                                                      apropos
+                                                      dir
+                                                      doc
+                                                      error->str
+                                                      ex-str
+                                                      ex-triage
+                                                      find-doc
+                                                      print-doc
+                                                      pst
+                                                      source]}}}}
