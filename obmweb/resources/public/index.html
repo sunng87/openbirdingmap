@@ -3,7 +3,11 @@
   <head>
     <meta charset='utf-8'>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet"
+          href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+          crossorigin=""/>
     <link rel="stylesheet" href="vendor/css/material-design-iconic-font.min.css">
     <link rel="stylesheet" href="vendor/css/re-com.css">
     <link rel="stylesheet" href="css/custom.css">
@@ -15,8 +19,11 @@
     <noscript>
       obmweb is a JavaScript app. Please enable JavaScript to continue.
     </noscript>
-    <div id="app"></div>
-    <div id="map"></div>
+    <div id="content">
+      <div id="map"></div>
+      <div id="app"></div>
+    </div>
+
     <script src="/js/compiled/app.js"></script>
   </body>
 </html>
