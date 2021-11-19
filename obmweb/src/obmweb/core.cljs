@@ -17,11 +17,16 @@
 (defn setup-leaflet []
   [:> leaflet/MapContainer
    {:center [40.0822029 116.4624013]
-    :zoom 13}
+    :zoom 13
+    :attributionControl false}
 
    [:> leaflet/TileLayer
     {:attribution "Map data &copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
-     :url "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}]])
+     :url "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}]
+
+   [:> leaflet/AttributionControl
+    {:position "bottomleft"
+     }]])
 
 (defn ^:dev/after-load mount-root []
   (re-frame/clear-subscription-cache!)

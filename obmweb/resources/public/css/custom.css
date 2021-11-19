@@ -3,6 +3,7 @@
     bottom: 0;
     height: 100%;
     width: 100%;
+    z-index: 10;
 }
 
 #map .leaflet-container {
@@ -11,8 +12,13 @@
 }
 
 #app {
-    top: 10px;
-    z-index:1;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index:100;
     background: white;
     width:30%;
+    max-width: 588px;
+    height: 100%;
+    background-color: rgba(255,255,255,0.9);
 }
