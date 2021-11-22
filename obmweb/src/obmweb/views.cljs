@@ -14,8 +14,8 @@
   (let [name (re-frame/subscribe [::subs/name])]
     [re-com/title
      :src   (at)
-     :label (str "OpenBirdingMap")
-     :level :level1]))
+     :label (str "Information")
+     :level :level2]))
 
 (defn home-panel []
   [re-com/v-box

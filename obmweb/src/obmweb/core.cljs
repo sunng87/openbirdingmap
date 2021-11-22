@@ -14,6 +14,12 @@
   (when config/debug?
     (println "dev mode")))
 
+(defn mapLocation []
+  (let [map (leaflet/useMap)
+        _ (leaflet/useMapEvent "locationfound" (fn [e] (.flyTo map (.-latlng e) (.getZoom map))))]
+    (.locate map)
+    nil))
+
 (defn setup-leaflet []
   [:> leaflet/MapContainer
    {:center [40.0822029 116.4624013]
@@ -25,8 +31,9 @@
      :url "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}]
 
    [:> leaflet/AttributionControl
-    {:position "bottomleft"
-     }]])
+    {:position "bottomleft"}]
+
+   [:> mapLocation]])
 
 (defn ^:dev/after-load mount-root []
   (re-frame/clear-subscription-cache!)
@@ -37,18 +44,8 @@
     (rdom/unmount-component-at-node map-el)
     (rdom/render [setup-leaflet] map-el)))
 
-;; (defn setup-leaflet []
-;;   (let [map (.map js/L "map")]
-;;     (.setView map (clj->js [40.0822029 116.4624013]) 13)
-
-;;     (let [layer (.tileLayer js/L "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-;;                             (clj->js {:attribution "Map data &copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"}))]
-;;       (.addTo layer map))))
-
-
 (defn init []
   (routes/start!)
   (re-frame/dispatch-sync [::events/initialize-db])
   (dev-setup)
-  (setup-leaflet)
   (mount-root))
