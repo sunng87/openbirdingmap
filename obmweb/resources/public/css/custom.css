@@ -1,9 +1,9 @@
 #map {
-    position: absolute;
-    bottom: 0;
+}
+
+.full-height {
     height: 100%;
     width: 100%;
-    z-index: 10;
 }
 
 #map .leaflet-container {
@@ -14,9 +14,7 @@
 #content {
     position: absolute;
     top: 0;
-    right: 0;
-    z-index:100;
-    background: white;
+    left: 0;
     width:30%;
     max-width: 588px;
     height: 100%;

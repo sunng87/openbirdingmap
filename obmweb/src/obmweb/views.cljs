@@ -4,8 +4,9 @@
    [re-com.core :as re-com :refer [at]]
    [obmweb.events :as events]
    [obmweb.routes :as routes]
-   [obmweb.subs :as subs]))
-
+   [obmweb.subs :as subs]
+   [obmweb.views.nav :refer [navbar]]
+   [obmweb.views.about :as views-about]))
 
 
 ;; home
@@ -21,8 +22,7 @@
   [re-com/v-box
    :src      (at)
    :gap      "1em"
-   :children [[home-title]]])
-
+   :children [[navbar] [home-title]]])
 
 (defmethod routes/panels :home-panel [] [home-panel])
 

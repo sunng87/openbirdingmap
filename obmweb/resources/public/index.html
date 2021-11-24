@@ -3,8 +3,11 @@
   <head>
     <meta charset='utf-8'>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link rel="stylesheet"
-          href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
+    <!--link rel="stylesheet"
+          href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css"
+    -->
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap@3.4.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/basscss@8.0.2/css/basscss.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
           integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
           crossorigin=""/>
@@ -19,10 +22,15 @@
     <noscript>
       obmweb is a JavaScript app. Please enable JavaScript to continue.
     </noscript>
-    <div id="map"></div>
-    <div id="content">
-      <h1 class="display-1">OpenBirdingMap <small class="text-muted">Beijing</small></h1>
+    <div id="map" class="absolute bottom-0 top-0 full-height z2"></div>
+    <div id="content" class="z3">
+      <header>
+        <h1 class="h1">OpenBirdingMap <small class="text-muted">Beijing</small></h1>
+      </header>
+
       <div id="app">
+
+      </div>
     </div>
 
     <script src="/js/compiled/app.js"></script>

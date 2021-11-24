@@ -22,16 +22,19 @@
 
 (defn setup-leaflet []
   [:> leaflet/MapContainer
-   {:center [40.0822029 116.4624013]
-    :zoom 13
-    :attributionControl false}
+   {:center [0,0]
+    :zoom 14
+    :attributionControl false
+    :zoomControl false}
 
    [:> leaflet/TileLayer
     {:attribution "Map data &copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
      :url "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}]
 
    [:> leaflet/AttributionControl
-    {:position "bottomleft"}]
+    {:position "bottomright"}]
+   [:> leaflet/ZoomControl
+    {:position "topright"}]
 
    [:> mapLocation]])
 
