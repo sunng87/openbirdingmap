@@ -5,8 +5,9 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.3"]
                  [info.sunng/ring-jetty9-adapter "0.16.0"]
-                 [metosin/reitit-ring "0.5.15"]
-                 [cheshire "5.10.1"]]
+                 [ring/ring-core "1.9.4"]
+                 [ring/ring-json "0.5.1"]
+                 [metosin/reitit-ring "0.5.15"]]
   :main ^:skip-aot obmserver.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
