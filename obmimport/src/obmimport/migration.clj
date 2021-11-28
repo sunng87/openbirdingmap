@@ -1,4 +1,4 @@
-(ns obmimport
+(ns obmimport.migration
   (:require [ragtime.jdbc :as jdbc]))
 
 (def config
