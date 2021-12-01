@@ -5,4 +5,7 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.3"]
                  [dev.weavejester/ragtime "0.9.0"]
-                 [org.mariadb.jdbc/mariadb-java-client "2.7.4"]])
+                 [org.mariadb.jdbc/mariadb-java-client "2.7.4"]
+                 [environ "1.2.0"]
+                 [org.clojure/data.csv "1.0.0"]
+                 [seancorfield/next.jdbc "1.2.659"]])
