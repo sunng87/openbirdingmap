@@ -3,7 +3,7 @@
             [ragtime.repl :as repl]
             [obmimport.config :as conf]))
 
-(def config
+(defn load-config! []
   (let [uri (format "jdbc:mariadb://%s:%s/%s?user=%s&password=%s"
                     (conf/mariadb-db-host)
                     (conf/mariadb-db-port)
@@ -13,5 +13,5 @@
     {:datastore  (jdbc/sql-database {:connection-uri uri})
      :migrations (jdbc/load-resources "migrations")}))
 
-(defn do-migrate []
-  (repl/migrate config))
+(defn do-migrate! []
+  (repl/migrate (load-config!)))

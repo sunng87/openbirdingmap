@@ -69,6 +69,9 @@
    :species-cname (nth line 4)
    :species-sname (nth line 5)
 
+   :record-count (try (Integer/parseInt (nth line 8))
+                      (catch Exception _ nil))
+
    :location-country (nth line 13)
    :location-country-code (nth line 14)
    :location-state (nth line 15)
@@ -89,9 +92,48 @@
               :user (conf/mariadb-db-username)
               :password (conf/mariadb-db-password)})
 
-(defn try-insert-location [item]
-  )
+(defn datasource []
+  (jdbc/get-datasource db-spec))
 
-(defn try-insert-species [item])
+(defn insert-location! [item]
+  ;; select by id before insertion
+  (let [ds (datasource)
+        r (jdbc/execute! ds ["select id from obm_location where id = ?" (:location-locality-id item)])]
+    (when (empty? r)
+      (let [params (mapv item [:location-locality-id
+                               :location-locality
+                               :location-lon
+                               :location-lat
+                               :location-country
+                               :location-country-code
+                               :location-state
+                               :location-state-code
+                               :location-locality-type])]
+        (jdbc/execute! ds
+                       (concat ["insert into obm_location(id, lname, lon, lat, country, country_code, state_name, state_code, ltype) values (?, ?, ?, ?, ?, ?, ?, ?, ?)"]
+                               params))))))
 
-(defn try-insert-record [item])
+(defn insert-species! [item]
+  ;; select by id before insertions, too
+  (let [ds (datasource)
+        r (jdbc/execute! ds ["select id from obm_species where id = ?" (:species-id item)])]
+    (when (empty? r)
+      (let [params (mapv item [:species-id
+                               :species-cname
+                               :species-sname])]
+        (jdbc/execute! ds
+                       (concat ["insert into obm_species(id, cname, sname) values (?, ?, ?)"]
+                                params))))))
+
+(defn insert-record! [item]
+  (let [ds (datasource)
+        r (jdbc/execute! ds ["select id from obm_record where id = ?" (:record-id item)])]
+    (when (empty? r)
+      (let [params (mapv item [:record-id
+                               :species-id
+                               :location-locality-id
+                               :record-date
+                               :record-count
+                               :record-observer-id])]
+        (jdbc/execute! ds
+                       (concat ["insert into obm_record(id, species_id, locality_id, record_date, record_count, observer_id) values (?, ?, ?, ?, ?, ?)"] params))))))
