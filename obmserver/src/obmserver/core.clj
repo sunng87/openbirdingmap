@@ -3,22 +3,30 @@
   (:require [ring.adapter.jetty9 :as jetty]
             [ring.middleware.json :refer [wrap-json-response]]
             [ring.util.response :as resp]
-            [reitit.ring :as reitit]))
+            [ring.middleware.defaults :refer [api-defaults wrap-defaults]]
+            [reitit.ring :as reitit]
+            [mount.core :as mount :refer [defstate]]
+
+            [obmserver.handlers :as handlers]))
 
 (defn the-handler [req]
-  (println 123)
   (resp/response {:data "ok"}))
 
 (def app
-  (reitit/ring-handler
-   (reitit/router
-    ["/" the-handler])
-   (reitit/create-default-handler)
-   {:middleware [wrap-json-response]}))
+  (let [the-app (reitit/ring-handler
+                 (reitit/router
+                  [["/" the-handler]
+                   ["/localities/:state_code" {:get handlers/list-localities}]])
+                 (reitit/create-default-handler)
+                 {:middleware [wrap-json-response]})]
+    (wrap-defaults the-app api-defaults)))
 
 (defn start-server []
   (jetty/run-jetty #'app {:port 8080 :join? false}))
 
-(defn -main
-  [& args]
-  (start-server))
+(defstate ^:dynamic *webserver*
+  :start (start-server)
+  :stop (jetty/stop-server *webserver*))
+
+(defn -main [& args]
+  (mount/start))
