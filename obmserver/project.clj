@@ -10,6 +10,7 @@
                  [ring/ring-json "0.5.1"]
                  [ring/ring-defaults "0.3.3"]
                  [metosin/reitit-ring "0.5.15"]
+                 [ring-cors "0.1.13"]
                  ;; database
                  [conman "0.9.1"]
                  [com.layerware/hugsql "0.5.1"]
