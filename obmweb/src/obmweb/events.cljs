@@ -35,12 +35,26 @@
                           :on-failure [::localities-failed]}
              :db (assoc db :loading? true)}))
 
+(defn- centroid [localities]
+  (if (not-empty localities)
+    (let [c (count localities)
+          centroid-lon (/ (apply + (mapv :lon localities)) c)
+          centroid-lat (/ (apply + (mapv :lat localities)) c)]
+      [centroid-lat centroid-lon])
+    [0 0]))
+
 (re-frame/reg-event-db
  ::localities-loaded
  (fn-traced [db [_ response]]
-            (assoc db :loading? false :localities (:results response))))
+            (assoc db
+                   :loading? false
+                   :localities (:results response)
+                   :centroid (centroid (:results response)))))
 
 (re-frame/reg-event-db
  ::localities-failed
  (fn-traced [db _]
-            (assoc db :loading? false :localities [])))
+            (assoc db
+                   :loading? false
+                   :localities []
+                   :centroid (centroid []))))

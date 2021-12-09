@@ -12,14 +12,6 @@
     (.locate map)
     nil))
 
-(defn- centroid [localities]
-  (if (not-empty localities)
-    (let [c (count localities)
-          centroid-lon (/ (apply + (mapv :lon localities)) c)
-          centroid-lat (/ (apply + (mapv :lat localities)) c)]
-      [centroid-lat centroid-lon])
-    [0 0]))
-
 (defn localityMarkers []
   (when-let [localities (not-empty @(re-frame/subscribe [::subs/localities]))]
     (map (fn [l]
@@ -32,16 +24,16 @@
          localities)))
 
 (defn centerToLocalities []
-  (when-let [localities (not-empty @(re-frame/subscribe [::subs/localities]))]
+  (when-let [center (not-empty @(re-frame/subscribe [::subs/centroid]))]
     (let [map (leaflet/useMap)
-          center (clj->js (centroid localities))]
+          center (clj->js center)]
       (.flyTo map (ll/latLng. center) 10)
       nil)))
 
 (defn setup-leaflet []
   [:> leaflet/MapContainer
    {:center [0 0]
-    :zoom 14
+    :zoom 2
     :attributionControl false
     :zoomControl false}
 

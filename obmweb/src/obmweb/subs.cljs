@@ -16,3 +16,8 @@
  ::localities
  (fn [db]
    (:localities db)))
+
+(re-frame/reg-sub
+ ::centroid
+ (fn [db]
+   (:centroid db)))
