@@ -33,7 +33,7 @@
                           :response-format (ajax/json-response-format {:keywords? true})
                           :on-success [::localities-loaded]
                           :on-failure [::localities-failed]}
-             :db (assoc db :loading? true)}))
+             :db (assoc db :loading? true :current-state state-code)}))
 
 (defn- centroid [localities]
   (if (not-empty localities)

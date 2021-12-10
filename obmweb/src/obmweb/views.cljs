@@ -18,11 +18,27 @@
      :label (str "Information")
      :level :level2]))
 
+(defn localities-list []
+  (let [localities (re-frame/subscribe [::subs/localities])]
+    [:div.p2
+     [re-com/title
+      :src (at)
+      :label (if-let [l (first @localities)]
+               (str (:state_name l) ", " (:country l))
+               "not loaded")
+      :level :level2]
+     [:ul
+      (map (fn [l]
+             [:li {:key (:id l)}
+              [:a {:href "#"
+                   :on-click #(re-frame/dispatch [::events/navigate :localities (:id l)])}
+               (:lname l)]])
+           @localities)]]))
+
 (defn home-panel []
   [re-com/v-box
    :src      (at)
-   :gap      "1em"
-   :children [[navbar] [home-title]]])
+   :children [[navbar] [localities-list]]])
 
 (defmethod routes/panels :home-panel [] [home-panel])
 

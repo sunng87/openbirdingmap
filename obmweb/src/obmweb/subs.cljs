@@ -21,3 +21,7 @@
  ::centroid
  (fn [db]
    (:centroid db)))
+
+(re-frame/reg-sub
+ ::current-state
+ (fn [db] (:current-state db)))
