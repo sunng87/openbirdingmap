@@ -9,6 +9,8 @@
 
 (defn list-species [req]
   (let [locality-id (-> req :path-params :locality_id)
+        locality (db/find-locality-by-id {:id locality-id})
         species-ids (db/find-species-by-locality-id {:locality_id locality-id})
         species (db/find-species-by-ids {:ids (mapv :species_id species-ids)})]
-    (resp/response {:results species})))
+    (resp/response {:results {:locality locality
+                              :species species}})))
