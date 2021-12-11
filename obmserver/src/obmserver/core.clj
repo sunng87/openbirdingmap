@@ -22,7 +22,8 @@
   (let [the-app (reitit/ring-handler
                  (reitit/router
                   [["/" the-handler]
-                   ["/localities/:state_code" {:get handlers/list-localities}]])
+                   ["/localities/:state_code" {:get handlers/list-localities}]
+                   ["/locality/:locality_id" {:get handlers/list-species}]])
                  (reitit/create-default-handler)
                  {:middleware [wrap-json-response
                                wrap-cors2]})]

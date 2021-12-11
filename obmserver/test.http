@@ -1,2 +1,5 @@
 ## list localities
 GET http://localhost:8080/localities/CN-11
+
+## list species by locality
+GET http://localhost:8080/locality/L10139507
