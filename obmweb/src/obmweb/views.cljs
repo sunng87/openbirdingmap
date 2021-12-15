@@ -6,7 +6,8 @@
    [obmweb.routes :as routes]
    [obmweb.subs :as subs]
    [obmweb.views.nav :refer [navbar]]
-   [obmweb.views.about :as views-about]))
+   [obmweb.views.about :as views-about]
+   [obmweb.views.locality :as views-locality]))
 
 
 ;; home
@@ -30,15 +31,14 @@
      [:ul
       (map (fn [l]
              [:li {:key (:id l)}
-              [:a {:href "#"
-                   :on-click #(re-frame/dispatch [::events/navigate :localities (:id l)])}
+              [:a {:href (routes/url-for :locality :id (:id l))}
                (:lname l)]])
            @localities)]]))
 
 (defn home-panel []
   [re-com/v-box
    :src      (at)
-   :children [[navbar] [localities-list]]])
+   :children [[localities-list]]])
 
 (defmethod routes/panels :home-panel [] [home-panel])
 
@@ -49,4 +49,4 @@
     [re-com/v-box
      :src      (at)
      :height   "100%"
-     :children [(routes/panels @active-panel)]]))
+     :children [(navbar) (routes/panels @active-panel)]]))

@@ -25,3 +25,7 @@
 (re-frame/reg-sub
  ::current-state
  (fn [db] (:current-state db)))
+
+(re-frame/reg-sub
+ ::current-locality
+ (fn [db] (:current-locality db)))

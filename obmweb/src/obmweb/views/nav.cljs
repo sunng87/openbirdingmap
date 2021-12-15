@@ -12,14 +12,16 @@
      [:header
       [re-com/h-box
        :src (at)
+       :gap "2em"
        :children [[re-com/title
                    :src (at)
                    :label "OpenBirdingMap"
                    :level :level1]
                   [re-com/single-dropdown
-                   :choices [{:id "CN-11" :label "Beijing"}]
+                   :choices [{:id "CN-11" :label "Beijing, China"}]
                    :on-change (fn [id] (re-frame/dispatch [::events/load-localities id]))
-                   :model state]]]]
+                   :model state
+                   :width "auto"]]]]
      [:nav.navbar.navbar-default
       [:div.container-fluid
        [:div.collapse.navbar-collapse
@@ -27,8 +29,7 @@
          (doall
           (for [item ["home" "about"]]
             (let [panel (str item "-panel")]
-              [:li.nav-item {:class (when (= panel (name @active-panel)) "active")
+              [:li.nav-item {:class (when (and @active-panel (= panel (name @active-panel))) "active")
                              :key (str "nav-" item)}
-               [:a.nav-link {:on-click #(re-frame/dispatch [::events/navigate (keyword item)])
-                             :href "#"}
+               [:a.nav-link {:href (routes/url-for (keyword item))}
                 item]])))]]]]]))

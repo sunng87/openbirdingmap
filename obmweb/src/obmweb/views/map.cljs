@@ -2,6 +2,7 @@
   (:require
    [re-frame.core :as re-frame]
    [obmweb.events :as events]
+   [obmweb.routes :as routes]
    [obmweb.subs :as subs]
    ["react-leaflet" :as leaflet]
    ["leaflet" :as ll]))
@@ -20,7 +21,8 @@
               :icon (ll/Icon. #js{"iconUrl" "/images/bird.svg"
                                   "iconSize" (ll/Point. 32 32)})
               :key (:id l)}
-             [:> leaflet/Popup {:key (:id l)} (:lname l)]])
+             [:> leaflet/Popup {:key (:id l)}
+              [:a {:href (routes/url-for :locality :id (:id l))} (:lname l)]]])
          localities)))
 
 (defn centerToLocalities []

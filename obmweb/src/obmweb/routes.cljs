@@ -12,9 +12,8 @@
   (atom
     ["/" {""      :home
           "about" :about
-          "hotspot" :hotspot
-          "checklist" :checklist
-          "species" :species}]))
+          "locality/" {[:id] :locality}
+          "species/" {[:id] :species}}]))
 
 (defn parse
   [url]
@@ -26,8 +25,14 @@
 
 (defn dispatch
   [route]
-  (let [panel (keyword (str (name (:handler route)) "-panel"))]
-    (re-frame/dispatch [::events/set-active-panel panel])))
+  (let [handler-name (:handler route)
+        panel (keyword (str (name handler-name) "-panel"))]
+    (re-frame/dispatch [::events/set-active-panel panel])
+
+    ;; additional url based data loading
+    (condp = handler-name
+      :locality (re-frame/dispatch [::events/request-locality (-> route :route-params :id)])
+      nil)))
 
 (defonce history
   (pushy/pushy dispatch parse))

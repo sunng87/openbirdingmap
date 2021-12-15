@@ -33,7 +33,7 @@
                           :response-format (ajax/json-response-format {:keywords? true})
                           :on-success [::localities-loaded]
                           :on-failure [::localities-failed]}
-             :db (assoc db :loading? true :current-state state-code)}))
+             :db (assoc db :loading? true :current-state state-code :localities [])}))
 
 (defn- centroid [localities]
   (if (not-empty localities)
@@ -57,4 +57,32 @@
             (assoc db
                    :loading? false
                    :localities []
+                   :centroid (centroid []))))
+
+(re-frame/reg-event-fx
+ ::request-locality
+ (fn-traced [{:keys [db]} [_ locality-id]]
+            {:http-xhrio {:method :get
+                          :uri (gstring/format "http://localhost:8080/locality/%s" locality-id)
+                          :format (ajax/json-request-format)
+                          :response-format (ajax/json-response-format {:keywords? true})
+                          :on-success [::locality-loaded]
+                          :on-failure [::locality-failed]}
+             :db (assoc db :loading? true :current-locality nil)}))
+
+(re-frame/reg-event-db
+ ::locality-loaded
+ (fn-traced [db [_ response]]
+            (assoc db
+                   :loading? false
+                   :current-locality (:results response)
+                   :centroid (let [l (-> response :results :locality)]
+                               [(:lat l) (:lon l)]))))
+
+(re-frame/reg-event-db
+ ::locality-failed
+ (fn-traced [db _]
+            (assoc db
+                   :loading? false
+                   :current-locality nil
                    :centroid (centroid []))))
