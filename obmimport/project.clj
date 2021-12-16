@@ -8,4 +8,8 @@
                  [org.mariadb.jdbc/mariadb-java-client "2.7.4"]
                  [environ "1.2.0"]
                  [org.clojure/data.csv "1.0.0"]
-                 [seancorfield/next.jdbc "1.2.659"]])
+                 [seancorfield/next.jdbc "1.2.659"]
+
+                 ;; http client
+                 [clj-http "3.12.3"]
+                 [cheshire "5.10.1"]])

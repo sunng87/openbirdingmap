@@ -2,14 +2,15 @@
   (:require [clojure.data.csv :as csv]
             [clojure.java.io :as io]
             [next.jdbc :as jdbc]
-            [obmimport.config :as conf]))
+            [obmimport.config :as conf]
+            [obmimport.ebirdapi :as api]))
 
 (defn load-ebird [file-path]
-  (let [the-file (io/reader (io/file file-path))
-        lines (csv/read-csv the-file :separator \tab)
-        ;; skip the first line
-        lines (rest lines)]
-    lines))
+  (with-open [the-file (io/reader (io/file file-path))]
+    (let [lines (csv/read-csv the-file :separator \tab)
+          ;; skip the first line
+          lines (doall (rest lines))]
+      lines)))
 
 ;; ebird data csv
 ;;
@@ -95,6 +96,15 @@
 (defn datasource []
   (jdbc/get-datasource db-spec))
 
+(defn load-ebird-taxonomy [path]
+  (with-open [the-file (io/reader (io/file path))]
+    (let [lines (csv/read-csv the-file :separator \,)
+          lines (doall (rest lines))]
+      lines)))
+
+(defn into-id-species-code-map [ebd-taxonomy]
+  (into {} (map #(vector (nth % 0) (nth % 2)) ebd-taxonomy)))
+
 (defn insert-location! [item]
   ;; select by id before insertion
   (let [ds (datasource)
@@ -113,16 +123,22 @@
                        (concat ["insert into obm_location(id, lname, lon, lat, country, country_code, state_name, state_code, ltype) values (?, ?, ?, ?, ?, ?, ?, ?, ?)"]
                                params))))))
 
-(defn insert-species! [item]
+(defn import-species! [item id-scode-map]
   ;; select by id before insertions, too
   (let [ds (datasource)
         r (jdbc/execute! ds ["select id from obm_species where id = ?" (:species-id item)])]
     (when (empty? r)
       (let [params (mapv item [:species-id
                                :species-cname
-                               :species-sname])]
+                               :species-sname])
+            scode (get id-scode-map (:species-id item))
+            ;; local name from api
+            lname (-> (api/call-ebird-taxonomy [scode])
+                      first
+                      :comName)
+            params (conj params scode lname)]
         (jdbc/execute! ds
-                       (concat ["insert into obm_species(id, cname, sname) values (?, ?, ?)"]
+                       (concat ["insert into obm_species(id, cname, sname, species_code, local_name) values (?, ?, ?)"]
                                 params))))))
 
 (defn insert-record! [item]
