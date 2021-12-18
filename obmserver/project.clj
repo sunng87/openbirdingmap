@@ -12,8 +12,9 @@
                  [metosin/reitit-ring "0.5.15"]
                  [ring-cors "0.1.13"]
                  ;; database
-                 [conman "0.9.1"]
-                 [com.layerware/hugsql "0.5.1"]
+                 [conman "0.9.3"]
+                 [com.layerware/hugsql-core "0.5.1"]
+                 [com.layerware/hugsql-adapter-next-jdbc "0.5.1"]
                  [org.mariadb.jdbc/mariadb-java-client "2.7.4"]
                  ;; config
                  [environ "1.2.0"]
