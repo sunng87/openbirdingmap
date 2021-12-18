@@ -17,11 +17,9 @@
      [:ul
       (map (fn [s]
              [:li {:key (:id s)}
-              [:a {:href (routes/url-for :species :id (:id s))
-                   :on-click (fn [_]
-                               ;; TODO
-                               )}
-               (:cname s)]])
+              [:a {:href (routes/url-for :species :id (:id s))}
+               (:local_name s)]
+              [:span.ml1 (:cname s)]])
            species)]]))
 
 (defn locality-parent-panel []
