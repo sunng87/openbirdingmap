@@ -105,6 +105,12 @@
 (defn into-id-species-code-map [ebd-taxonomy]
   (into {} (map #(vector (nth % 0) (nth % 2)) ebd-taxonomy)))
 
+(defn dedup-by-key [k items]
+  (vals (into {} (map #(vector (k %) %) items))))
+
+(def dedup-by-location (partial dedup-by-key :location-locality-id))
+(def dedup-by-species (partial dedup-by-key :species-id))
+
 (defn insert-location! [item]
   ;; select by id before insertion
   (let [ds (datasource)
@@ -138,7 +144,7 @@
                       :comName)
             params (conj params scode lname)]
         (jdbc/execute! ds
-                       (concat ["insert into obm_species(id, cname, sname, species_code, local_name) values (?, ?, ?)"]
+                       (concat ["insert into obm_species(id, cname, sname, species_code, local_name) values (?, ?, ?, ?, ?)"]
                                 params))))))
 
 (defn insert-record! [item]
