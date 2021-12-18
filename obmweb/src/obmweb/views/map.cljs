@@ -13,8 +13,8 @@
     (.locate map)
     nil))
 
-(defn localityMarkers []
-  (when-let [localities (not-empty @(re-frame/subscribe [::subs/localities]))]
+(defn localityMarkers [localities]
+  (when (not-empty localities)
     (map (fn [l]
             [:> leaflet/Marker
              {:position [(:lat l) (:lon l)]
@@ -25,29 +25,29 @@
               [:a {:href (routes/url-for :locality :id (:id l))} (:lname l)]]])
          localities)))
 
-(defn centerToLocalities []
-  (when-let [center (not-empty @(re-frame/subscribe [::subs/centroid]))]
-    (let [map (leaflet/useMap)
-          center (clj->js center)]
-      (.flyTo map (ll/latLng. center) 10)
-      nil)))
+(defn centerToLocalities [{center :centroid}]
+  (let [map (leaflet/useMap)
+        center (clj->js center)]
+    (.flyTo map (ll/latLng. center) 10)
+    nil))
 
 (defn setup-leaflet []
-  [:> leaflet/MapContainer
-   {:center [0 0]
-    :zoom 2
-    :attributionControl false
-    :zoomControl false}
+  (let [map-data @(re-frame/subscribe [::subs/map])]
+    [:> leaflet/MapContainer
+     {:center [0 0]
+      :zoom 2
+      :attributionControl false
+      :zoomControl false}
 
-   [:> leaflet/TileLayer
-    {:attribution "Map data &copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
-     :url "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}]
+     [:> leaflet/TileLayer
+      {:attribution "Map data &copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
+       :url "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}]
 
-   [:> leaflet/AttributionControl
-    {:position "bottomright"}]
-   [:> leaflet/ZoomControl
-    {:position "topright"}]
+     [:> leaflet/AttributionControl
+      {:position "bottomright"}]
+     [:> leaflet/ZoomControl
+      {:position "topright"}]
 
-   (localityMarkers)
-   [:> centerToLocalities]
-   ])
+     (localityMarkers (:localities map-data))
+     [:f> centerToLocalities {:centroid (:centroid map-data)}]
+     ]))

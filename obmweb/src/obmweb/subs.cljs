@@ -18,9 +18,9 @@
    (:localities db)))
 
 (re-frame/reg-sub
- ::centroid
+ ::map
  (fn [db]
-   (:centroid db)))
+   (select-keys db [:centroid :localities])))
 
 (re-frame/reg-sub
  ::current-state
