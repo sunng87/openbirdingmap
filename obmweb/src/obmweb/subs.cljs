@@ -20,7 +20,7 @@
 (re-frame/reg-sub
  ::map
  (fn [db]
-   (select-keys db [:centroid :localities])))
+   (select-keys db [:bounds :localities])))
 
 (re-frame/reg-sub
  ::current-state

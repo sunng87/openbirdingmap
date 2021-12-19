@@ -49,7 +49,7 @@
             (assoc db
                    :loading? false
                    :localities (:results response)
-                   :centroid (centroid (:results response)))))
+                   :bounds (mapv #(vector (:lat %) (:lon %)) (:results response)))))
 
 (re-frame/reg-event-db
  ::localities-failed
@@ -57,7 +57,7 @@
             (assoc db
                    :loading? false
                    :localities []
-                   :centroid (centroid []))))
+                   :bounds nil)))
 
 (re-frame/reg-event-fx
  ::request-locality
@@ -76,8 +76,8 @@
             (assoc db
                    :loading? false
                    :current-locality (:results response)
-                   :centroid (let [l (-> response :results :locality)]
-                               [(:lat l) (:lon l)]))))
+                   :bounds (let [l (-> response :results :locality)]
+                               [[(:lat l) (:lon l)]]))))
 
 (re-frame/reg-event-db
  ::locality-failed
@@ -85,4 +85,10 @@
             (assoc db
                    :loading? false
                    :current-locality nil
-                   :centroid (centroid []))))
+                   :bounds nil)))
+
+(re-frame/reg-event-db
+ ::reset-bound
+ (fn-traced [db _]
+            (assoc db
+                   :bounds (mapv #(vector (:lat %) (:lon %)) (:localities db)))))

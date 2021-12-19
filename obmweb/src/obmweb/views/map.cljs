@@ -25,10 +25,11 @@
               [:a {:href (routes/url-for :locality :id (:id l))} (:lname l)]]])
          localities)))
 
-(defn centerToLocalities [{center :centroid}]
+(defn centerToLocalities [{bounds :bounds}]
   (let [map (leaflet/useMap)
-        center (clj->js center)]
-    (.flyTo map (ll/latLng. center) 10)
+        bounds (clj->js bounds)]
+    (when (not-empty bounds)
+      (.flyToBounds map (ll/LatLngBounds. bounds)))
     nil))
 
 (defn setup-leaflet []
@@ -49,5 +50,5 @@
       {:position "topright"}]
 
      (localityMarkers (:localities map-data))
-     [:f> centerToLocalities {:centroid (:centroid map-data)}]
+     [:f> centerToLocalities {:bounds (:bounds map-data)}]
      ]))
