@@ -11,6 +11,7 @@
                  [ring/ring-defaults "0.3.3"]
                  [metosin/reitit-ring "0.5.15"]
                  [ring-cors "0.1.13"]
+                 [ring-logger "1.0.1"]
                  ;; database
                  [conman "0.9.3"]
                  [com.layerware/hugsql-core "0.5.1"]
@@ -19,7 +20,15 @@
                  ;; config
                  [environ "1.2.0"]
                  ;; lifecycle
-                 [mount "0.1.16"]]
+                 [mount "0.1.16"]
+                 ;; logging
+                 [org.clojure/tools.logging "1.2.3"]
+                 [org.apache.logging.log4j/log4j-api "2.17.0"]
+                 [org.apache.logging.log4j/log4j-core "2.17.0"]
+                 [org.apache.logging.log4j/log4j-slf4j18-impl "2.17.0"]
+                 ;; web crawling
+                 [clj-http "3.12.3"]
+                 [org.jsoup/jsoup "1.13.1"]]
   :main ^:skip-aot obmserver.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
