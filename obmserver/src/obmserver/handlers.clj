@@ -1,5 +1,6 @@
 (ns obmserver.handlers
   (:require [obmserver.db :as db]
+            [obmserver.crawling :as craw]
             [ring.util.response :as resp]))
 
 (defn list-localities [req]
@@ -14,3 +15,21 @@
         species (db/find-species-by-ids {:ids (mapv :species_id species-ids)})]
     (resp/response {:results {:locality locality
                               :species species}})))
+
+(defn get-species [req]
+  (let [species-id (-> req :path-params :species_id)
+        locality-id (-> req :params :locality_id)
+        ;; query
+        species (db/find-species-by-id {:id species-id})
+        records (when locality-id
+                  (db/find-records-by-species-and-locality {:species_id species-id
+                                                            :locality_id locality-id}))]
+    (resp/response {:results {:species species
+                              :records records}})))
+
+(defn get-species-image [req]
+  (let [species-id (-> req :path-params :species_id)
+        state-id (-> req :path-params :state_id)]
+    (resp/response (-> (craw/to-ebird-url species-id state-id)
+                       craw/fetch-html
+                       craw/parse-head-image))))

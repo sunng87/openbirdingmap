@@ -5,13 +5,11 @@
             [ring.util.response :as resp]
             [ring.middleware.defaults :refer [api-defaults wrap-defaults]]
             [ring.middleware.cors :refer [wrap-cors]]
+            [ring.logger :as logger]
             [reitit.ring :as reitit]
             [mount.core :as mount :refer [defstate]]
 
             [obmserver.handlers :as handlers]))
-
-(defn the-handler [req]
-  (resp/response {:data "ok"}))
 
 (defn wrap-cors2 [app]
   (wrap-cors app
@@ -21,12 +19,14 @@
 (def app
   (let [the-app (reitit/ring-handler
                  (reitit/router
-                  [["/" the-handler]
-                   ["/localities/:state_code" {:get handlers/list-localities}]
-                   ["/locality/:locality_id" {:get handlers/list-species}]])
+                  [["/localities/:state_code" {:get handlers/list-localities}]
+                   ["/locality/:locality_id" {:get handlers/list-species}]
+                   ["/species/:species_id" {:get handlers/get-species}]
+                   ["/species/:species_id/images/:state_id" {:get handlers/get-species-image}]])
                  (reitit/create-default-handler)
                  {:middleware [wrap-json-response
-                               wrap-cors2]})]
+                               wrap-cors2
+                               logger/wrap-with-logger]})]
     (wrap-defaults the-app api-defaults)))
 
 (defn start-server []
