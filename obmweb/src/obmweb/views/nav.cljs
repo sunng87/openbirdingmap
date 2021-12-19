@@ -12,16 +12,18 @@
      [:header
       [re-com/h-box
        :src (at)
-       :gap "2em"
        :children [[re-com/title
                    :src (at)
                    :label "OpenBirdingMap"
                    :level :level1]
                   [re-com/single-dropdown
-                   :choices [{:id "CN-11" :label "Beijing, China"}]
-                   :on-change (fn [id] (re-frame/dispatch [::events/load-localities id]))
+                   :choices [{:id "CN-11" :label "Beijing, China"}
+                             {:id "CN-32" :label "Jiangsu, China"}]
+                   :on-change (fn [id]
+                                (re-frame/dispatch [::events/load-localities id])
+                                (routes/navigate! :home))
                    :model state
-                   :width "auto"]]]]
+                   :class "m2"]]]]
      [:nav.navbar.navbar-default
       [:div.container-fluid
        [:div.collapse.navbar-collapse
