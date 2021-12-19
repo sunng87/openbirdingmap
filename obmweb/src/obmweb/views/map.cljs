@@ -26,10 +26,11 @@
          localities)))
 
 (defn centerToLocalities [{bounds :bounds}]
-  (let [map (leaflet/useMap)
-        bounds (clj->js bounds)]
+  (let [map (leaflet/useMap)]
     (when (not-empty bounds)
-      (.flyToBounds map (ll/LatLngBounds. bounds)))
+      (if (> (count bounds) 1)
+        (.flyToBounds map (ll/LatLngBounds. (clj->js bounds)))
+        (.flyTo map (ll/latLng. (clj->js (first bounds))) 15)))
     nil))
 
 (defn setup-leaflet []
