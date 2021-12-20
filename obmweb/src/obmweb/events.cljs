@@ -114,12 +114,34 @@
                             :on-failure [::species-failed]}
                :db (assoc db :loading? true :current-species nil)})))
 
-(re-frame/reg-event-db
+(re-frame/reg-event-fx
  ::species-loaded
- (fn-traced [db [_ response]]
-            (assoc db :loading? false :current-species (:results response))))
+ (fn-traced [{:keys [db]} [_ response]]
+            (let [results (:results response)
+                  current-locality (:current-locality db)]
+              {:db (assoc db :loading? false :current-species results)
+               :dispatch [::request-species-image [(-> results :species :species_code)
+                                                   (-> current-locality :locality :state_code)]]})))
 
 (re-frame/reg-event-db
  ::species-failed
  (fn-traced [db _]
             (assoc db :loading? false)))
+
+;; TODO: gloabl failure event with arguments
+(re-frame/reg-event-fx
+ ::request-species-image
+ (fn-traced [{:keys [db]} [_ [species-id state-code]]]
+            (let [endpoint(url "/species/%s/images/%s" species-id state-code)]
+              {:http-xhrio {:method :get
+                            :uri endpoint
+                            :format (ajax/json-request-format)
+                            :response-format (ajax/json-response-format {:keywords? true})
+                            :on-success [::species-image-loaded]
+                            :on-failure [::species-image-failed]} ;; TODO
+               :db (assoc db :current-species-image nil)})))
+
+(re-frame/reg-event-db
+ ::species-image-loaded
+ (fn-traced [db [_ response]]
+            (assoc db :current-species-image (-> response :results :image))))

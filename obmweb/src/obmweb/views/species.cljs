@@ -13,7 +13,8 @@
 
         species (-> @species-info :current-species :species)
         records (-> @species-info :current-species :records)
-        locality (-> @species-info :current-locality :locality)]
+        locality (-> @species-info :current-locality :locality)
+        image (-> @species-info :current-species-image)]
     [:<>
      [:div.p2
       [re-com/title
@@ -24,6 +25,8 @@
        :label (:local_name species)]
       [re-com/label
        :label (:sname species)]
+      (when image
+        [:p [:img.fit {:src (:src image) :alt (:alt image)}]])
       [:p [:a {:target "_blank"
                :href (gstring/format "https://ebird.org/species/%s/%s"
                                      (:species_code species)
@@ -34,8 +37,9 @@
        :src (at)
        :label "Observations"
        :level :level3]
-      [re-com/label
-       :label (:lname locality)]
+      [re-com/hyperlink-href
+       :label (:lname locality)
+       :href (gstring/format "/locality/%s" (:id locality))]
       [:ul
        (map (fn [obs]
               [:li {:key (:id obs)}

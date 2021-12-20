@@ -30,6 +30,7 @@
     (re-frame/dispatch [::events/set-active-panel panel])
 
     ;; additional url based data loading
+    ;; TODO: move these into events/set-active-panel
     (condp = handler-name
       :home (re-frame/dispatch [::events/reset-bound])
       :locality (re-frame/dispatch [::events/request-locality (-> route :route-params :id)])
