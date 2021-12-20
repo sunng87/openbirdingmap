@@ -7,7 +7,9 @@
    [obmweb.subs :as subs]
    [obmweb.views.nav :refer [navbar]]
    [obmweb.views.about :as views-about]
-   [obmweb.views.locality :as views-locality]))
+   [obmweb.views.locality :as views-locality]
+   [obmweb.views.species]
+   ))
 
 
 ;; home

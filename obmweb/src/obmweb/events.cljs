@@ -9,6 +9,10 @@
    [goog.string.format]
    ))
 
+(def url-root "http://localhost:8080")
+(defn url [path & vars]
+  (apply gstring/format (str url-root path) vars))
+
 (re-frame/reg-event-db
  ::initialize-db
  (fn-traced [_ _]
@@ -28,7 +32,7 @@
  ::load-localities
  (fn-traced [{:keys [db]} [_ state-code]]
             {:http-xhrio {:method :get
-                          :uri (gstring/format "http://localhost:8080/localities/%s" state-code)
+                          :uri (url "/localities/%s" state-code)
                           :format (ajax/json-request-format)
                           :response-format (ajax/json-response-format {:keywords? true})
                           :on-success [::localities-loaded]
@@ -63,7 +67,7 @@
  ::request-locality
  (fn-traced [{:keys [db]} [_ locality-id]]
             {:http-xhrio {:method :get
-                          :uri (gstring/format "http://localhost:8080/locality/%s" locality-id)
+                          :uri (url "/locality/%s" locality-id)
                           :format (ajax/json-request-format)
                           :response-format (ajax/json-response-format {:keywords? true})
                           :on-success [::locality-loaded]
@@ -92,3 +96,30 @@
  (fn-traced [db _]
             (assoc db
                    :bounds (mapv #(vector (:lat %) (:lon %)) (:localities db)))))
+
+(re-frame/reg-event-fx
+ ::request-species
+ (fn-traced [{:keys [db]} [_ species-id]]
+            (let [current-locality (:current-locality db)
+                  endpoint (if current-locality
+                             (url "/species/%s?locality_id=%s" species-id (-> current-locality
+                                                                              :locality
+                                                                              :id))
+                             (url "/species/%s" species-id))]
+              {:http-xhrio {:method :get
+                            :uri endpoint
+                            :format (ajax/json-request-format)
+                            :response-format (ajax/json-response-format {:keywords? true})
+                            :on-success [::species-loaded]
+                            :on-failure [::species-failed]}
+               :db (assoc db :loading? true :current-species nil)})))
+
+(re-frame/reg-event-db
+ ::species-loaded
+ (fn-traced [db [_ response]]
+            (assoc db :loading? false :current-species (:results response))))
+
+(re-frame/reg-event-db
+ ::species-failed
+ (fn-traced [db _]
+            (assoc db :loading? false)))

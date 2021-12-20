@@ -29,3 +29,8 @@
 (re-frame/reg-sub
  ::current-locality
  (fn [db] (:current-locality db)))
+
+(re-frame/reg-sub
+ ::current-species
+ (fn [db]
+   (select-keys db [:current-species :current-locality])))

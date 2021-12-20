@@ -33,6 +33,7 @@
     (condp = handler-name
       :home (re-frame/dispatch [::events/reset-bound])
       :locality (re-frame/dispatch [::events/request-locality (-> route :route-params :id)])
+      :species (re-frame/dispatch [::events/request-species (-> route :route-params :id)])
       nil)))
 
 (defonce history
