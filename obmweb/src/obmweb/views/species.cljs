@@ -21,17 +21,21 @@
        :src (at)
        :label (:cname species)
        :level :level2]
-      [re-com/label
-       :label (:local_name species)]
-      [re-com/label
-       :label (:sname species)]
+      [:p
+       [re-com/label :label (:local_name species)]
+       " | "
+       [re-com/label :label (:sname species)]
+       " | "
+       [re-com/hyperlink-href
+        :label "View on ebird.org"
+        :target "_blank"
+        :href (gstring/format "https://ebird.org/species/%s/%s"
+                              (:species_code species)
+                              (:state_code locality))]]
       (when image
-        [:p [:img.fit {:src (:src image) :alt (:alt image)}]])
-      [:p [:a {:target "_blank"
-               :href (gstring/format "https://ebird.org/species/%s/%s"
-                                     (:species_code species)
-                                     (:state_code locality))}
-           "View on ebird.org"]]]
+        [:<>
+         [:p [:img.fit {:src (:src image) :alt (:alt image)}]]
+         [re-com/label :label (:alt image)]])]
      [:div.p2
       [re-com/title
        :src (at)

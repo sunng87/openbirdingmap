@@ -112,7 +112,7 @@
                             :response-format (ajax/json-response-format {:keywords? true})
                             :on-success [::species-loaded]
                             :on-failure [::species-failed]}
-               :db (assoc db :loading? true :current-species nil)})))
+               :db (assoc db :loading? true :current-species nil :current-species-image nil)})))
 
 (re-frame/reg-event-fx
  ::species-loaded
