@@ -8,7 +8,7 @@
 
 (defn fetch-html [url]
   (let [r (http/get url {:socket-timeout 5000
-                         :connection-timeout 2000})]
+                         :connection-timeout 3000})]
     (when (= (:status r) 200)
       (:body r))))
 
