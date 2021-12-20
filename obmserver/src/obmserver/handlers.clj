@@ -30,6 +30,6 @@
 (defn get-species-image [req]
   (let [species-id (-> req :path-params :species_id)
         state-id (-> req :path-params :state_id)]
-    (resp/response (-> (craw/to-ebird-url species-id state-id)
-                       craw/fetch-html
-                       craw/parse-head-image))))
+    (resp/response {:results (-> (craw/to-ebird-url species-id state-id)
+                                 craw/fetch-html
+                                 craw/parse-head-image)})))
