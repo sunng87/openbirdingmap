@@ -120,8 +120,7 @@
             (let [results (:results response)
                   current-locality (:current-locality db)]
               {:db (assoc db :loading? false :current-species results)
-               :dispatch [::request-species-image [(-> results :species :species_code)
-                                                   (-> current-locality :locality :state_code)]]})))
+               :dispatch [::request-species-image [(-> results :species :species_code)]]})))
 
 (re-frame/reg-event-db
  ::species-failed
@@ -131,8 +130,8 @@
 ;; TODO: gloabl failure event with arguments
 (re-frame/reg-event-fx
  ::request-species-image
- (fn-traced [{:keys [db]} [_ [species-id state-code]]]
-            (let [endpoint(url "/species/%s/images/%s" species-id state-code)]
+ (fn-traced [{:keys [db]} [_ [species-id]]]
+            (let [endpoint(url "/species/%s/image" species-id)]
               {:http-xhrio {:method :get
                             :uri endpoint
                             :format (ajax/json-request-format)

@@ -3,8 +3,8 @@
             [clj-http.client :as http])
   (:import [org.jsoup Jsoup]))
 
-(defn to-ebird-url [species-id region-id]
-  (format "https://ebird.org/species/%s/%s" species-id region-id))
+(defn to-ebird-url [species-id]
+  (format "https://ebird.org/species/%s" species-id))
 
 (defn fetch-html [url]
   (let [r (http/get url {:socket-timeout 5000

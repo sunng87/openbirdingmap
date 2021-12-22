@@ -28,8 +28,7 @@
                               :records records}})))
 
 (defn get-species-image [req]
-  (let [species-id (-> req :path-params :species_id)
-        state-id (-> req :path-params :state_id)]
-    (resp/response {:results (-> (craw/to-ebird-url species-id state-id)
+  (let [species-id (-> req :path-params :species_id)]
+    (resp/response {:results (-> (craw/to-ebird-url species-id)
                                  craw/fetch-html
                                  craw/parse-head-image)})))

@@ -22,7 +22,7 @@
                   [["/localities/:state_code" {:get handlers/list-localities}]
                    ["/locality/:locality_id" {:get handlers/list-species}]
                    ["/species/:species_id" {:get handlers/get-species}]
-                   ["/species/:species_id/images/:state_id" {:get handlers/get-species-image}]])
+                   ["/species/:species_id/image" {:get handlers/get-species-image}]])
                  (reitit/create-default-handler)
                  {:middleware [wrap-json-response
                                wrap-cors2
