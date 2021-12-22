@@ -25,8 +25,15 @@
 
 (re-frame/reg-event-fx
  ::set-active-panel
- (fn-traced [{:keys [db]} [_ active-panel]]
-            {:db (assoc db :active-panel active-panel)}))
+ (fn-traced [{:keys [db]} [_ active-panel route]]
+            (let [new-db (assoc db :active-panel active-panel)
+                  handler-name (:handler route)]
+              (condp = handler-name
+                ;; additional panel based events to trigger
+                :home {:db new-db :dispatch [::reset-bound]}
+                :locality {:db new-db :dispatch [::request-locality (-> route :route-params :id)]}
+                :species {:db new-db :dispatch [::request-species (-> route :route-params :id)]}
+                {:db new-db}))))
 
 (re-frame/reg-event-fx
  ::load-localities
