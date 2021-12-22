@@ -21,7 +21,7 @@
        :src (at)
        :label (:cname species)
        :level :level2]
-      [:p
+      [:div
        [re-com/label :label (:local_name species)]
        " | "
        [re-com/label :label (:sname species)]

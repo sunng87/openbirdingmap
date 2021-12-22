@@ -18,7 +18,8 @@
                    :child [re-com/title
                            :src (at)
                            :label "OpenBirdingMap"
-                           :level :level1]]
+                           :level :level1
+                           :class "p1"]]
                   [re-com/box
                    :align-self :center
                    :class "m2"
