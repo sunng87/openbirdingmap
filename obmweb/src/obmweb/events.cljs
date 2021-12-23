@@ -9,7 +9,7 @@
    [goog.string.format]
    ))
 
-(def url-root "http://localhost:8080")
+(def url-root "http://localhost:8080/api")
 (defn url [path & vars]
   (apply gstring/format (str url-root path) vars))
 

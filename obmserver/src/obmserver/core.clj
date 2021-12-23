@@ -19,7 +19,8 @@
 (def app
   (let [the-app (reitit/ring-handler
                  (reitit/router
-                  [["/localities/:state_code" {:get handlers/list-localities}]
+                  ["/api"
+                   ["/localities/:state_code" {:get handlers/list-localities}]
                    ["/locality/:locality_id" {:get handlers/list-species}]
                    ["/species/:species_id" {:get handlers/get-species}]
                    ["/species/:species_id/image" {:get handlers/get-species-image}]])
