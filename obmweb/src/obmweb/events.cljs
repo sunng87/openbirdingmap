@@ -43,7 +43,7 @@
                           :format (ajax/json-request-format)
                           :response-format (ajax/json-response-format {:keywords? true})
                           :on-success [::localities-loaded]
-                          :on-failure [::localities-failed]}
+                          :on-failure [::localities-failed [::load-localities]]}
              :db (assoc db :loading? true :current-state state-code :localities [])}))
 
 (defn- centroid [localities]
@@ -78,7 +78,7 @@
                           :format (ajax/json-request-format)
                           :response-format (ajax/json-response-format {:keywords? true})
                           :on-success [::locality-loaded]
-                          :on-failure [::locality-failed]}
+                          :on-failure [::request-failed]}
              :db (assoc db :loading? true :current-locality nil)}))
 
 (re-frame/reg-event-db
@@ -91,12 +91,9 @@
                                [[(:lat l) (:lon l)]]))))
 
 (re-frame/reg-event-db
- ::locality-failed
+ ::request-failed
  (fn-traced [db _]
-            (assoc db
-                   :loading? false
-                   :current-locality nil
-                   :bounds nil)))
+            (assoc db :loading? false)))
 
 (re-frame/reg-event-db
  ::reset-bound
@@ -118,7 +115,7 @@
                             :format (ajax/json-request-format)
                             :response-format (ajax/json-response-format {:keywords? true})
                             :on-success [::species-loaded]
-                            :on-failure [::species-failed]}
+                            :on-failure [::request-failed [::request-species]]}
                :db (assoc db :loading? true :current-species nil :current-species-image nil)})))
 
 (re-frame/reg-event-fx
@@ -134,7 +131,6 @@
  (fn-traced [db _]
             (assoc db :loading? false)))
 
-;; TODO: gloabl failure event with arguments
 (re-frame/reg-event-fx
  ::request-species-image
  (fn-traced [{:keys [db]} [_ [species-id]]]
@@ -144,7 +140,7 @@
                             :format (ajax/json-request-format)
                             :response-format (ajax/json-response-format {:keywords? true})
                             :on-success [::species-image-loaded]
-                            :on-failure [::species-image-failed]} ;; TODO
+                            :on-failure [::request-failed [::request-sepcies-image]]} ;; TODO
                :db (assoc db :current-species-image nil)})))
 
 (re-frame/reg-event-db
