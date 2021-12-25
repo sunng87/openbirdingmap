@@ -4,6 +4,7 @@
 
             [goog.string :as gstring]
             [goog.string.format]
+            [clojure.string :as cstring]
             [obmweb.events :as events]
             [obmweb.subs :as subs]
             [obmweb.routes :as routes]))
@@ -48,7 +49,7 @@
        (map (fn [obs]
               [:li {:key (:id obs)}
                [:b.p1 (:record_count obs)]
-               [:span.p1 (:record_date obs)]
+               [:span.p1 (first (cstring/split (:record_date obs) #"T"))]
                [:span.p1 (:observer_id obs)]])
             records)]]]))
 
