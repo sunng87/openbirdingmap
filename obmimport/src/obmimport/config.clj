@@ -15,3 +15,10 @@
 
 (defn mariadb-db-password []
   (env :obm-db-password "obm_pass"))
+
+(def db-spec {:dbtype "mysql"
+              :dbname (mariadb-db-name)
+              :host (mariadb-db-host)
+              :port (mariadb-db-port)
+              :user (mariadb-db-username)
+              :password (mariadb-db-password)})

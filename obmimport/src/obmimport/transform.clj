@@ -86,24 +86,18 @@
    :record-date (nth line 28)
    :record-observer-id (nth line 30)})
 
-(def db-spec {:dbtype "mysql"
-              :dbname (conf/mariadb-db-name)
-              :host (conf/mariadb-db-host)
-              :port (conf/mariadb-db-port)
-              :user (conf/mariadb-db-username)
-              :password (conf/mariadb-db-password)})
-
 (defn datasource []
-  (jdbc/get-datasource db-spec))
+  (jdbc/get-datasource conf/db-spec))
 
-(defn load-ebird-taxonomy [path]
-  (with-open [the-file (io/reader (io/file path))]
-    (let [lines (csv/read-csv the-file :separator \,)
-          lines (doall (rest lines))]
-      lines)))
-
+;; TODO: make this built-in
 (defn into-id-species-code-map [ebd-taxonomy]
   (into {} (map #(vector (nth % 0) (nth % 2)) ebd-taxonomy)))
+
+(def ebird-taxonomy-dict
+  (with-open [the-file (io/reader (io/resource "eBird_Taxonomy_v2021.csv"))]
+    (let [lines (csv/read-csv the-file :separator \,)
+          lines (doall (rest lines))]
+      (into-id-species-code-map lines))))
 
 (defn dedup-by-key [k items]
   (vals (into {} (map #(vector (k %) %) items))))
@@ -111,10 +105,11 @@
 (def dedup-by-location (partial dedup-by-key :location-locality-id))
 (def dedup-by-species (partial dedup-by-key :species-id))
 
+(declare ^:dynamic *ds*)
+
 (defn insert-location! [item]
   ;; select by id before insertion
-  (let [ds (datasource)
-        r (jdbc/execute! ds ["select id from obm_location where id = ?" (:location-locality-id item)])]
+  (let [r (jdbc/execute! *ds* ["select id from obm_location where id = ?" (:location-locality-id item)])]
     (when (empty? r)
       (let [params (mapv item [:location-locality-id
                                :location-locality
@@ -125,31 +120,29 @@
                                :location-state
                                :location-state-code
                                :location-locality-type])]
-        (jdbc/execute! ds
+        (jdbc/execute! *ds*
                        (concat ["insert into obm_location(id, lname, lon, lat, country, country_code, state_name, state_code, ltype) values (?, ?, ?, ?, ?, ?, ?, ?, ?)"]
                                params))))))
 
-(defn import-species! [item id-scode-map]
+(defn import-species! [item]
   ;; select by id before insertions, too
-  (let [ds (datasource)
-        r (jdbc/execute! ds ["select id from obm_species where id = ?" (:species-id item)])]
+  (let [r (jdbc/execute! *ds* ["select id from obm_species where id = ?" (:species-id item)])]
     (when (empty? r)
       (let [params (mapv item [:species-id
                                :species-cname
                                :species-sname])
-            scode (get id-scode-map (:species-id item))
+            scode (get ebird-taxonomy-dict (:species-id item))
             ;; local name from api
             lname (-> (api/call-ebird-taxonomy [scode])
                       first
                       :comName)
             params (conj params scode lname)]
-        (jdbc/execute! ds
+        (jdbc/execute! *ds*
                        (concat ["insert into obm_species(id, cname, sname, species_code, local_name) values (?, ?, ?, ?, ?)"]
                                 params))))))
 
 (defn insert-record! [item]
-  (let [ds (datasource)
-        r (jdbc/execute! ds ["select id from obm_record where id = ?" (:record-id item)])]
+  (let [r (jdbc/execute! *ds* ["select id from obm_record where id = ?" (:record-id item)])]
     (when (empty? r)
       (let [params (mapv item [:record-id
                                :species-id
@@ -157,5 +150,5 @@
                                :record-date
                                :record-count
                                :record-observer-id])]
-        (jdbc/execute! ds
+        (jdbc/execute! *ds*
                        (concat ["insert into obm_record(id, species_id, locality_id, record_date, record_count, observer_id) values (?, ?, ?, ?, ?, ?)"] params))))))
