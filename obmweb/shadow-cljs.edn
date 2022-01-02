@@ -13,9 +13,9 @@
   [clj-commons/pushy "0.3.10"]
   [day8.re-frame/http-fx "0.2.3"]
 
-  [binaryage/devtools "1.0.3"]
-  [day8.re-frame/re-frame-10x "1.2.0"]
-  [cider/cider-nrepl "0.26.0"]]
+  [binaryage/devtools "1.0.4"]
+  [day8.re-frame/re-frame-10x "1.2.1"]
+  [cider/cider-nrepl "0.27.4"]]
 
  :dev-http
  {8280 "resources/public"
