@@ -1,22 +1,22 @@
 (ns obmserver.db
   (:require [conman.core :as conman]
             [mount.core :refer [defstate]]
-            [environ.core :refer [env]]))
+            [stavka.core :refer [$$ $$l]]))
 
 (defn mariadb-db-host []
-  (env :obm-db-host "localhost"))
+  ($$ :obm.db.host "localhost"))
 
 (defn mariadb-db-port []
-  (Integer/parseInt (env :obm-db-port "3306")))
+  ($$l :obm.db.port 3306))
 
 (defn mariadb-db-name []
-  (env :obm-db-name "obm"))
+  ($$ :obm.db.name "obm"))
 
 (defn mariadb-db-username []
-  (env :obm-db-username "obm_user"))
+  ($$ :obm.db.username "obm_user"))
 
 (defn mariadb-db-password []
-  (env :obm-db-password "obm_pass"))
+  ($$ :obm.db.password "obm_pass"))
 
 (defn pool-spec []
   {:jdbc-url (format "jdbc:mariadb://%s:%s/%s?user=%s&password=%s"

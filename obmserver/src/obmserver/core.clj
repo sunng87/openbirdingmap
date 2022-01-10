@@ -8,6 +8,7 @@
             [ring.logger :as logger]
             [reitit.ring :as reitit]
             [mount.core :as mount :refer [defstate]]
+            [stavka.core :as sta]
 
             [obmserver.handlers :as handlers]))
 
@@ -37,5 +38,10 @@
   :start (start-server)
   :stop (jetty/stop-server *webserver*))
 
+(defn setup-stavka! []
+  (sta/global! (sta/env)
+               (sta/edn (sta/file "./config.edn"))))
+
 (defn -main [& args]
+  (setup-stavka!)
   (mount/start))

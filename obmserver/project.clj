@@ -18,7 +18,7 @@
                  [com.layerware/hugsql-adapter-next-jdbc "0.5.1"]
                  [org.mariadb.jdbc/mariadb-java-client "2.7.4"]
                  ;; config
-                 [environ "1.2.0"]
+                 [stavka "0.7.0"]
                  ;; lifecycle
                  [mount "0.1.16"]
                  ;; logging
