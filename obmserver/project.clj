@@ -5,7 +5,7 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.3"]
                  ;; web
-                 [info.sunng/ring-jetty9-adapter "0.17.0"]
+                 [info.sunng/ring-jetty9-adapter "0.17.2"]
                  [ring/ring-core "1.9.4"]
                  [ring/ring-json "0.5.1"]
                  [ring/ring-defaults "0.3.3"]

@@ -42,6 +42,9 @@
   (sta/global! (sta/env)
                (sta/edn (sta/file "./config.edn"))))
 
-(defn -main [& args]
+(defn start []
   (setup-stavka!)
   (mount/start))
+
+(defn -main [& args]
+  (start))
