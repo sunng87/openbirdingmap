@@ -1,17 +1,17 @@
 (ns obmweb.views.about
   (:require [re-frame.core :as rf]
-            [re-com.core :as re-com]
+            ["@blueprintjs/core" :as bp]
             [obmweb.routes :as routes]
             [obmweb.views.nav :refer [navbar]]))
 
 (defn about-panel []
-  [re-com/v-box
-   :src (re-com/at)
-   :children [[re-com/title :label "About" :level :level2]
-              [re-com/p "OpenBirdingMap is created by "
-               [re-com/hyperlink-href :href "https://sunng.info" :label "Ning Sun" :target "_blank"]
-               ". This website displays latest birding records from "
-               [re-com/hyperlink-href :href "https://ebird.org" :label "ebird" :target "_blank"]
-               "."]]])
+  [:div.p2
+   [:h2.bp-heading "About"]
+   [:> bp/Text
+    "OpenBirdingMap is created by "
+    [:a {:href "https://sunng.info" :target "_blank"} "Ning Sun"]
+    ". This website displays latest birding records from "
+    [:a {:href "https://ebird.org" :target "_blank"} "ebird"]
+    "."]])
 
 (defmethod routes/panels :about-panel [] [about-panel])
