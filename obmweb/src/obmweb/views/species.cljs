@@ -47,12 +47,18 @@
         [:h3.bp3-heading "Observations"]
         [:a {:href (gstring/format "/locality/%s" (:id locality))}
          (:lname locality)]
-        [:ul
-         (map (fn [obs]
-                [:li {:key (:id obs)}
-                 [:b.p1 (:record_count obs)]
-                 [:span.p1 (first (cstring/split (:record_date obs) #"T"))]
-                 [:span.p1 (:observer_id obs)]])
-              records)]]])))
+        [:table.bp3-html-table.bp3-html-table-striped.bp3-html-table-bordered
+         [:thead
+          [:tr
+           [:td "Date"]
+           [:td "Amount"]
+           [:td "Observer ID"]]]
+         [:tbody
+          (map (fn [obs]
+                 [:tr {:key (:id obs)}
+                  [:td (first (cstring/split (:record_date obs) #"T"))]
+                  [:td [:b (:record_count obs)]]
+                  [:td (:observer_id obs)]])
+               records)]]]])))
 
 (defmethod routes/panels :species-panel [] [species-panel])
