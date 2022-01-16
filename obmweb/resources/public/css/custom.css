@@ -8,7 +8,8 @@
 
 #map .leaflet-container {
     height: 100%;
-    width: 100%;
+    width: 70%;
+    left: 30%;
 }
 
 #content {
@@ -16,7 +17,7 @@
     top: 0;
     left: 0;
     width:30%;
-    max-width: 588px;
+/*    max-width: 588px; */
     height: 100%;
     background-color: rgba(255,255,255,0.9);
     overflow: auto;
