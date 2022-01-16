@@ -88,7 +88,7 @@
                    :loading? false
                    :current-locality (:results response)
                    :bounds (let [l (-> response :results :locality)]
-                               [[(:lat l) (:lon l)]]))))
+                             [[(:lat l) (:lon l)]]))))
 
 (re-frame/reg-event-db
  ::request-failed

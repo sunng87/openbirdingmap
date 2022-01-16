@@ -8,7 +8,6 @@
  [[reagent "1.1.0"]
   [re-frame "1.2.0"]
   [day8.re-frame/tracing "0.6.2"]
-  [re-com "2.13.2"]
   [bidi "2.1.6"]
   [clj-commons/pushy "0.3.10"]
   [day8.re-frame/http-fx "0.2.3"]

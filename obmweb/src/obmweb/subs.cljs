@@ -36,3 +36,7 @@
    (select-keys db [:current-species
                     :current-species-image
                     :current-locality])))
+
+(re-frame/reg-sub
+ ::loading?
+ (fn [db] (:loading? db)))
