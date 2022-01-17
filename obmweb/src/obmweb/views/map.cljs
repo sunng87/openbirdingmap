@@ -33,7 +33,7 @@
         (.flyTo map (ll/latLng. (clj->js (first bounds))) 15)))
     nil))
 
-(defn setup-leaflet []
+(defn map-view []
   (let [map-data @(re-frame/subscribe [::subs/map])]
     [:> leaflet/MapContainer
      {:center [0 0]

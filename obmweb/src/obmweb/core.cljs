@@ -21,7 +21,7 @@
     (rdom/render [views/main-panel] root-el))
   (let [map-el (.getElementById js/document "map")]
     (rdom/unmount-component-at-node map-el)
-    (rdom/render [map/setup-leaflet] map-el)))
+    (rdom/render [map/map-view] map-el)))
 
 (defn init []
   (routes/start!)
