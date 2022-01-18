@@ -37,14 +37,17 @@
                 :home-panel [(assoc home :current true)]
                 :locality-panel (conj [home] (when-let [locality-info (:locality @locality)]
                                                {:text (:lname locality-info)
-                                                :href (routes/url-for :locality :id (:id locality-info))
+                                                :href (routes/url-for :locality :locality_id (:id locality-info))
                                                 :current true}))
                 :species-panel (conj [home]
-                                     {:text (-> @species :current-locality :locality :lname)
-                                      :href (routes/url-for :locality :id (-> @species :current-locality :locality :id))}
+                                     (when-let [locality (-> @species :current-locality :locality)]
+                                       {:text (:lname locality)
+                                        :href (routes/url-for :locality :locality_id (:id locality))})
                                      (when-let [species-info (-> @species :current-species :species)]
                                        {:text (-> species-info :cname)
-                                        :href (routes/url-for :species :id (-> species-info :id))
+                                        :href (routes/url-for :species
+                                                              :locality_id (-> @species :current-locality :locality :id)
+                                                              :species_id (-> species-info :id))
                                         :current true}))
                 ;; not a information panel, :about for example
                 nil)

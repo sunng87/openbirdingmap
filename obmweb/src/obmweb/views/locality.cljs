@@ -14,7 +14,7 @@
      [:ul
       (map (fn [s]
              [:li {:key (:id s)}
-              [:a {:href (routes/url-for :species :id (:id s))}
+              [:a {:href (routes/url-for :species :locality_id (:id locality) :species_id (:id s))}
                (:local_name s)]
               [:span.ml1 (:cname s)]])
            species)]]))

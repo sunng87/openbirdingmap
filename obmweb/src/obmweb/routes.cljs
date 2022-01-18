@@ -12,8 +12,8 @@
   (atom
     ["/" {""      :home
           "about" :about
-          "locality/" {[:id] :locality}
-          "species/" {[:id] :species}}]))
+          "locality/" {[:locality_id] {"" :locality
+                                       "/species/" {[:species_id] :species}}}}]))
 
 (defn parse
   [url]

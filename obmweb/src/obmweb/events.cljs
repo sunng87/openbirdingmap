@@ -103,13 +103,8 @@
 
 (re-frame/reg-event-fx
  ::request-species
- (fn-traced [{:keys [db]} [_ species-id]]
-            (let [current-locality (:current-locality db)
-                  endpoint (if current-locality
-                             (url "/species/%s?locality_id=%s" species-id (-> current-locality
-                                                                              :locality
-                                                                              :id))
-                             (url "/species/%s" species-id))]
+ (fn-traced [{:keys [db]} [_ locality-id species-id]]
+            (let [endpoint (url "/species/%s?locality_id=%s" species-id locality-id)]
               {:http-xhrio {:method :get
                             :uri endpoint
                             :format (ajax/json-request-format)

@@ -16,36 +16,42 @@
         locality (-> @species-info :current-locality :locality)
         image (-> @species-info :current-species-image)]
     (when species
-      [:<>
-       [:div.p2
-        [:h2.bp3-heading  (:cname species)]
-        [:p
-         [:span.bp3-ui-text (:local_name species)]
-         " | "
-         [:span.bp3-ui-text (:sname species)]]
-        [:p
-         [:a {:href (gstring/format "https://ebird.org/species/%s/%s"
-                                    (:species_code species)
-                                    (:state_code locality))
-              :target "_blank"}
-          "ebird.org"]
-         " | "
-         [:a {:target "_blank"
-              :href (gstring/format "https://en.wikipedia.org/wiki/%s"
-                                    (cstring/replace (:cname species) #" " "_"))}
-          "wikipedia.org"]
-         " | "
-         [:a {:target "_blank"
-              :href (gstring/format "https://xeno-canto.org/explore?query=%s"
-                                    (:cname species))}
-          "xeno-canto.org"]]
-        (when image
-          [:<>
-           [:img.fit {:src (:src image) :alt (:alt image)}]
-           [:span.bp3-ui-text (:alt image)]])]
-       [:div.p2
-        [:h3.bp3-heading "Observations"]
-        [:a {:href (gstring/format "/locality/%s" (:id locality))}
+      [:div.p2
+       [:h2.bp3-heading  (:cname species)]
+       [:p
+        [:span.bp3-ui-text (:local_name species)]
+        " | "
+        [:span.bp3-ui-text (:sname species)]]
+       [:p
+        [:a {:href (gstring/format "https://ebird.org/species/%s/%s"
+                                   (:species_code species)
+                                   (:state_code locality))
+             :target "_blank"}
+         "ebird.org"]
+        " | "
+        [:a {:target "_blank"
+             :href (gstring/format "https://en.wikipedia.org/wiki/%s"
+                                   (cstring/replace (:cname species) #" " "_"))}
+         "wikipedia.org"]
+        " | "
+        [:a {:target "_blank"
+             :href (gstring/format "https://xeno-canto.org/explore?query=%s"
+                                   (:cname species))}
+         "xeno-canto.org"]]
+
+       (if image
+         [:> bp/Card {:className "my1"}
+          [:> bp/H3 "Image"]
+          [:img.fit {:src (:src image) :alt (:alt image)}]
+          [:span.bp3-ui-text (:alt image)]]
+         [:> bp/Card {:className "bp3-skeleton"}
+          [:> bp/H3 "Loading"]
+          [:img.fit {:src (:src image) :alt (:alt image)}]
+          [:span.bp3-ui-text "text"]])
+
+       [:> bp/Card {:className "my1"}
+        [:> bp/H3 "Observations"]
+        [:a {:href (routes/url-for :locality :locality_id (:id locality))}
          (:lname locality)]
         [:table.bp3-html-table.bp3-html-table-striped.bp3-html-table-bordered
          [:thead

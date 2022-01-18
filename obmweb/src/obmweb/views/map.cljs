@@ -22,7 +22,7 @@
                                   "iconSize" (ll/Point. 32 32)})
               :key (:id l)}
              [:> leaflet/Popup {:key (:id l)}
-              [:a {:href (routes/url-for :locality :id (:id l))} (:lname l)]]])
+              [:a {:href (routes/url-for :locality :locality_id (:id l))} (:lname l)]]])
          localities)))
 
 (defn centerToLocalities [{bounds :bounds}]
