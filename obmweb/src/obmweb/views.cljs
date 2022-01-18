@@ -16,14 +16,13 @@
 (defn localities-list []
   (let [localities (re-frame/subscribe [::subs/localities])]
     [:div.p2
-     [:h2.bp3-heading
-      (if-let [l (first @localities)]
-        (str (:state_name l) ", " (:country l))
-        "not loaded")]
+     (if-let [l (first @localities)]
+       [:h2.bp3-heading (str (:state_name l) ", " (:country l))]
+       [:h2.bp3-heading.bp3-skeleton "not loaded"])
      [:ul
       (map (fn [l]
              [:li {:key (:id l)}
-              [:a {:href (routes/url-for :locality :id (:id l))}
+              [:a {:href (routes/url-for :locality :locality_id (:id l))}
                (:lname l)]])
            @localities)]]))
 

@@ -69,7 +69,7 @@
         species (re-frame/subscribe [::subs/current-species])]
     [:div
      [:header
-      [:> bp/Navbar
+      [:> bp/Navbar {:className "bp3-dark"}
        [:> bp/NavbarGroup
         [:> bp/NavbarHeading "OpenBirdingMap"]
         [:> bp/NavbarDivider]
