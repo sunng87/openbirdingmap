@@ -31,8 +31,16 @@
               (condp = handler-name
                 ;; additional panel based events to trigger
                 :home {:db new-db :dispatch [::reset-bound]}
-                :locality {:db new-db :dispatch [::request-locality (-> route :route-params :id)]}
-                :species {:db new-db :dispatch [::request-species (-> route :route-params :id)]}
+                :locality {:db new-db :dispatch [::request-locality (-> route :route-params :locality_id)]}
+                ;; load locality if current-locality is empty
+                :species (let [locality-id (-> route :route-params :locality_id)
+                               fx [[:dispatch [::request-species
+                                               locality-id
+                                               (-> route :route-params :species_id)]]]
+                               fx (if-not (:current-locality db)
+                                    (conj fx [:dispatch [::request-locality locality-id]])
+                                    fx)]
+                           {:db new-db :fx fx})
                 {:db new-db}))))
 
 (re-frame/reg-event-fx
