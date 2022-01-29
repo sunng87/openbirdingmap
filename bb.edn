@@ -1,0 +1,8 @@
+{:tasks
+ {
+  build:importer (shell {:dir "obmimport"} "lein uberjar")
+  build:server (shell {:dir "obmserver"} "lein uberjar")
+  build:web (shell {:dir "obmweb"} "npm run release")
+  -build:all {:depends [build:importer build:server build:web]}
+  build:all {:task (run '-build:all {:parallel true})}}
+ }
