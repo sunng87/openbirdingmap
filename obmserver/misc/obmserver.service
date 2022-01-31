@@ -1,0 +1,15 @@
+[Unit]
+Description=OpenBirdingMap server
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=java -jar obmserver.jar
+WorkingDirectory=/opt/obm
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=obmserver
+
+[Install]
+WantedBy=multi-user.target

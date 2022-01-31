@@ -1,8 +1,26 @@
 {:tasks
  {
+  :init (do
+          (defn remote-server-name []
+            (first *command-line-args*)))
+
   build:importer (shell {:dir "obmimport"} "lein uberjar")
   build:server (shell {:dir "obmserver"} "lein uberjar")
   build:web (shell {:dir "obmweb"} "npm run release")
   -build:all {:depends [build:importer build:server build:web]}
-  build:all {:task (run '-build:all {:parallel true})}}
+  build:all {:task (run '-build:all {:parallel true})}
+
+  deploy:importer {:depends [build:importer]
+                   :task (shell {:dir "obmimport"}
+                                (format "scp target/uberjar/obmimport-0.1.0-SNAPSHOT-standalone.jar %s:work/obm/" (remote-server-name)))}
+  deploy:server {:depends [build:server]
+                 :task (do
+                         (shell {:dir "obmserver"}
+                                (format "scp target/uberjar/obmserver-0.1.0-SNAPSHOT-standalone.jar %s:/opt/obm/obmserver.jar" (remote-server-name)))
+                         (shell {:dir "obmserver"}
+                                (format "scp misc/obmserver.service %s:/usr/lib/systemd/system/obmserver.service" (remote-server-name))))}
+  deploy:web {:depends [build:web]
+              :task (shell {:dir "obmweb"}
+                           (format "rsync -azv resources/public/ %s:/opt/obm/public/" (remote-server-name)))}
+  }
  }
