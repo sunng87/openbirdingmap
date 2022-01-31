@@ -32,7 +32,7 @@
     (wrap-defaults the-app api-defaults)))
 
 (defn start-server []
-  (jetty/run-jetty #'app {:port 8080 :join? false}))
+  (jetty/run-jetty #'app {:port (sta/$$l :http-port 8080) :join? false}))
 
 (defstate ^:dynamic *webserver*
   :start (start-server)
