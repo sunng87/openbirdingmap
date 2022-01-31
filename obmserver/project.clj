@@ -32,4 +32,8 @@
   :main ^:skip-aot obmserver.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
-                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})
+                       :native-image {:jvm-opts ["-Dclojure.compiler.direct-linking=true"]}}}
+  :plugins [[io.taylorwood/lein-native-image "0.3.2-SNAPSHOT"]]
+  :native-image {:name "obmserver"
+                 :opts ["--enable-http"
+                        "--enable-https"]})
