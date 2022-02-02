@@ -31,7 +31,12 @@
 
 
 (defn breadcrumbs [state panel locality species]
-  (let [home {:text (->> supported-states (filter #(= (:id %) @state)) first :label)
+  (let [loading? (re-frame/subscribe [::subs/loading?])
+        state (re-frame/subscribe [::subs/current-state])
+        panel (re-frame/subscribe [::subs/active-panel])
+        locality (re-frame/subscribe [::subs/current-locality])
+        species (re-frame/subscribe [::subs/current-species])
+        home {:text (->> supported-states (filter #(= (:id %) @state)) first :label)
               :href (routes/url-for :home)}
         items (case @panel
                 :home-panel [(assoc home :current true)]
@@ -53,34 +58,29 @@
                 nil)
         ;; remove nil items
         items (filter some? items)]
-    (when (not-empty items)
+    (when (and (not @loading?) (not-empty items))
       (let [item-renderer (fn [item]
                             (reagent/as-element [:> bp/Breadcrumb {:href (.-href item)
                                                                    :text (.-text item)
                                                                    :current (.-current item)}]))]
-        [:div.p2.bp3-text-small [:> bp/Breadcrumbs {:items items
-                                                    :breadcrumbRenderer item-renderer}]]))))
+        [:div.p2.bp3-text-small
+         [:> bp/Breadcrumbs {:items items
+                             :breadcrumbRenderer item-renderer}]]))))
 
 (defn navbar []
-  (let [loading? (re-frame/subscribe [::subs/loading?])
-        state (re-frame/subscribe [::subs/current-state])
-        panel (re-frame/subscribe [::subs/active-panel])
-        locality (re-frame/subscribe [::subs/current-locality])
-        species (re-frame/subscribe [::subs/current-species])]
-    [:div
-     [:header
-      [:> bp/Navbar {:className "bp3-dark"}
-       [:> bp/NavbarGroup
-        [:> bp/NavbarHeading "OpenBirdingMap"]
-        [:> bp/NavbarDivider]
-        (state-select state)]
-       [:> bp/NavbarGroup {:align "right"}
-        [:> bp/AnchorButton {:minimal true
-                             :icon "home"
-                             :text "home"
-                             :href (routes/url-for :home)}]
-        [:> bp/AnchorButton {:minimal true
-                             :icon "info-sign"
-                             :text "about"
-                             :href (routes/url-for :about)}]]]]
-     (when-not @loading? (breadcrumbs state panel locality species))]))
+  (let [state (re-frame/subscribe [::subs/current-state])]
+    [:header
+     [:> bp/Navbar {:className "bp3-dark"}
+      [:> bp/NavbarGroup
+       [:> bp/NavbarHeading "OpenBirdingMap"]
+       [:> bp/NavbarDivider]
+       (state-select state)]
+      [:> bp/NavbarGroup {:align "right"}
+       [:> bp/AnchorButton {:minimal true
+                            :icon "home"
+                            :text "home"
+                            :href (routes/url-for :home)}]
+       [:> bp/AnchorButton {:minimal true
+                            :icon "info-sign"
+                            :text "about"
+                            :href (routes/url-for :about)}]]]]))

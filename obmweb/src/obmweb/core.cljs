@@ -5,7 +5,7 @@
    [obmweb.events :as events]
    [obmweb.routes :as routes]
    [obmweb.views :as views]
-   [obmweb.views.map :as map]
+
    [obmweb.config :as config]
 ))
 
@@ -18,10 +18,7 @@
   (re-frame/clear-subscription-cache!)
   (let [root-el (.getElementById js/document "app")]
     (rdom/unmount-component-at-node root-el)
-    (rdom/render [views/main-panel] root-el))
-  (let [map-el (.getElementById js/document "map")]
-    (rdom/unmount-component-at-node map-el)
-    (rdom/render [map/map-view] map-el)))
+    (rdom/render [views/main-panel] root-el)))
 
 (defn init []
   (routes/start!)

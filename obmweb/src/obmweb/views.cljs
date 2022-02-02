@@ -5,7 +5,8 @@
    [obmweb.events :as events]
    [obmweb.routes :as routes]
    [obmweb.subs :as subs]
-   [obmweb.views.nav :refer [navbar]]
+   [obmweb.views.map :as map]
+   [obmweb.views.nav :as nav]
    [obmweb.views.about :as views-about]
    [obmweb.views.locality :as views-locality]
    [obmweb.views.species]
@@ -33,9 +34,12 @@
 (defmethod routes/panels :home-panel [] [home-panel])
 
 ;; main
-
 (defn main-panel []
   (let [active-panel (re-frame/subscribe [::subs/active-panel])]
-    [:div
-     [navbar]
-     (routes/panels @active-panel)]))
+    [:<>
+     [nav/navbar]
+     [:div#main
+      [:div#map [map/map-view]]
+      [:div#content
+       [nav/breadcrumbs]
+       (routes/panels @active-panel)]]]))
