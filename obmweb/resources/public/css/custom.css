@@ -1,24 +1,52 @@
-#map {
+header {
 }
 
-.full-height {
-    height: 100%;
-    width: 100%;
+#main {
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+}
+
+#map {
+    width: 65%;
+    height:calc(100vh - 50px);
 }
 
 #map .leaflet-container {
     height: 100%;
-    width: 70%;
-    left: 30%;
 }
 
 #content {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width:30%;
+    width:35%;
+    height:calc(100vh - 50px);
 /*    max-width: 588px; */
-    height: 100%;
+
     background-color: rgba(255,255,255,0.9);
     overflow: auto;
+}
+
+@media screen and (max-width:1080px) {
+    #main {
+        display: static;
+    }
+
+    #map {
+        height: 350px;
+        width: 100%;
+    }
+
+    #content {
+        width: 100%;
+        height: auto;
+    }
+
+    header {
+        position: sticky;
+        top: -1px;
+        z-index: 2001;
+    }
+
+    div.bp3-navbar-group:last-of-type {
+        display: none;
+    }
 }
