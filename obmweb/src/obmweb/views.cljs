@@ -42,4 +42,5 @@
       [:div#map [map/map-view]]
       [:div#content
        [nav/breadcrumbs]
-       (routes/panels @active-panel)]]]))
+       (routes/panels @active-panel)
+       [views-about/footer-panel]]]]))

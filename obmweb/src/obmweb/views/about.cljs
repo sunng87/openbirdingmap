@@ -20,4 +20,16 @@
     [:li "CN-11: Jan 2021 - Dec 2021"]
     [:li "CN-32: Jan 2021 - Dec 2021"]]])
 
+(defn footer-panel []
+  [:footer.p2
+   [:p.bp3-ui-text
+    [:a {:href "https://obm.sunng.info/"} "OpenBirdingMap"]
+    " - Data from "
+    [:a {:href "https://ebird.org" :target "_blank"} "eBird"]
+    "."]
+   [:p.bp3-ui-text
+    "Created with 💓, Clojure and ClojureScript. "
+    [:a {:href "https://github.com/sunng87/openbirdingmap" :target "_blank"}
+     [:> bp/Icon {:icon "git-repo"}]]]])
+
 (defmethod routes/panels :about-panel [] [about-panel])
