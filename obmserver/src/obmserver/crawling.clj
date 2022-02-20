@@ -16,4 +16,29 @@
   (let [soup (Jsoup/parse ^String html)
         image-meta (.. soup (select "meta[property=og:image]") (first) (attr "content"))
         image-info-meta (.. soup (select "meta[property=og:image:alt]") (first) (attr "content"))]
-    {:image {:src image-meta :alt image-info-meta}}))
+    {:src image-meta :alt image-info-meta}))
+
+(defn images [species-id]
+  (-> (to-ebird-url species-id)
+      fetch-html
+      parse-head-image))
+
+(defn query-xeno-canto-url [species-name]
+  (format "https://www.xeno-canto.org/api/2/recordings?query=%s"
+          (string/replace species-name #" " "+")))
+
+(defn- fetch-json [url]
+  (let [r (http/get url {:socket-timeout 5000
+                         :connection-timeout 3000
+                         :as :json})]
+    (when (= (:status r) 200)
+      (:body r))))
+
+(defn parse-recordings [data]
+  (when-let [recordings (not-empty (:recordings data))]
+    (take 5 (map #(select-keys % [:file :cnt :rec :loc :time]) recordings))))
+
+(defn recordings [species-name]
+  (-> (query-xeno-canto-url species-name)
+      fetch-json
+      parse-recordings))

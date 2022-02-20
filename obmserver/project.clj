@@ -28,7 +28,9 @@
                  [org.apache.logging.log4j/log4j-slf4j18-impl "2.17.0"]
                  ;; web crawling
                  [clj-http "3.12.3"]
-                 [org.jsoup/jsoup "1.13.1"]]
+                 [org.jsoup/jsoup "1.13.1"]
+                 ;; parallel processing
+                 [manifold "0.2.3"]]
   :main ^:skip-aot obmserver.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all

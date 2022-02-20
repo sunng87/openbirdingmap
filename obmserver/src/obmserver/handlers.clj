@@ -1,7 +1,9 @@
 (ns obmserver.handlers
   (:require [obmserver.db :as db]
             [obmserver.crawling :as craw]
-            [ring.util.response :as resp]))
+            [ring.util.response :as resp]
+            [manifold.deferred :as m]
+            [manifold.executor :as exec]))
 
 (defn list-localities [req]
   (let [state-code (-> req :path-params :state_code)
@@ -29,6 +31,17 @@
 
 (defn get-species-image [req]
   (let [species-id (-> req :path-params :species_id)]
-    (resp/response {:results (-> (craw/to-ebird-url species-id)
-                                 craw/fetch-html
-                                 craw/parse-head-image)})))
+    (resp/response {:results {:image (craw/images species-id)}})))
+
+(def pool (exec/fixed-thread-executor 10))
+
+(defn get-species-media [req]
+  (let [species-id (-> req :path-params :species_id)
+        species (db/find-species-by-id {:id species-id})
+        species-code (:species_code species)
+        common-name (:cname species)
+
+        image (m/future-with pool (craw/images species-code))
+        recordings (m/future-with pool (craw/recordings common-name))]
+    (resp/response {:results {:image @image
+                              :recordings @recordings}})))
