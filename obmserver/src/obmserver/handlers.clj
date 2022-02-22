@@ -39,9 +39,9 @@
   (let [species-id (-> req :path-params :species_id)
         species (db/find-species-by-id {:id species-id})
         species-code (:species_code species)
-        common-name (:cname species)
+        sci-name (:sname species)
 
         image (m/future-with pool (craw/images species-code))
-        recordings (m/future-with pool (craw/recordings common-name))]
+        recordings (m/future-with pool (craw/recordings sci-name))]
     (resp/response {:results {:image @image
                               :recordings @recordings}})))

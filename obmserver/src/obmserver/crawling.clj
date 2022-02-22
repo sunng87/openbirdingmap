@@ -23,9 +23,9 @@
       fetch-html
       parse-head-image))
 
-(defn query-xeno-canto-url [species-name]
+(defn query-xeno-canto-url [sname]
   (format "https://www.xeno-canto.org/api/2/recordings?query=%s"
-          (string/replace species-name #" " "+")))
+          (-> sname (string/replace #" |-" "+"))))
 
 (defn- fetch-json [url]
   (let [r (http/get url {:socket-timeout 5000
@@ -36,7 +36,7 @@
 
 (defn parse-recordings [data]
   (when-let [recordings (not-empty (:recordings data))]
-    (take 5 (map #(select-keys % [:file :cnt :rec :loc :time]) recordings))))
+    (take 5 (map #(select-keys % [:file :cnt :rec :loc :length :date :call :sono]) recordings))))
 
 (defn recordings [species-name]
   (-> (query-xeno-canto-url species-name)
