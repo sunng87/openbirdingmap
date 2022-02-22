@@ -34,7 +34,7 @@
  ::current-species
  (fn [db]
    (select-keys db [:current-species
-                    :current-species-image
+                    :current-species-media
                     :current-locality])))
 
 (re-frame/reg-sub

@@ -127,7 +127,7 @@
             (let [results (:results response)
                   current-locality (:current-locality db)]
               {:db (assoc db :loading? false :current-species results)
-               :dispatch [::request-species-image [(-> results :species :species_code)]]})))
+               :dispatch [::request-species-media [(-> results :species :id)]]})))
 
 (re-frame/reg-event-db
  ::species-failed
@@ -135,18 +135,18 @@
             (assoc db :loading? false)))
 
 (re-frame/reg-event-fx
- ::request-species-image
+ ::request-species-media
  (fn-traced [{:keys [db]} [_ [species-id]]]
-            (let [endpoint(url "/species/%s/image" species-id)]
+            (let [endpoint(url "/species/%s/media" species-id)]
               {:http-xhrio {:method :get
                             :uri endpoint
                             :format (ajax/json-request-format)
                             :response-format (ajax/json-response-format {:keywords? true})
-                            :on-success [::species-image-loaded]
-                            :on-failure [::request-failed [::request-sepcies-image]]} ;; TODO
-               :db (assoc db :current-species-image nil)})))
+                            :on-success [::species-media-loaded]
+                            :on-failure [::request-failed [::request-sepcies-media]]}
+               :db (assoc db :current-species-media nil)})))
 
 (re-frame/reg-event-db
- ::species-image-loaded
+ ::species-media-loaded
  (fn-traced [db [_ response]]
-            (assoc db :current-species-image (-> response :results :image))))
+            (assoc db :current-species-media (-> response :results))))

@@ -14,7 +14,7 @@
         species (-> @species-info :current-species :species)
         records (-> @species-info :current-species :records)
         locality (-> @species-info :current-locality :locality)
-        image (-> @species-info :current-species-image)]
+        media (-> @species-info :current-species-media)]
     (when species
       [:div.p2
        [:h2.bp3-heading  (:cname species)]
@@ -39,14 +39,26 @@
                                    (:cname species))}
          "xeno-canto.org"]]
 
-       (if image
+       (if-let [image (:image media)]
          [:> bp/Card {:className "my1"}
           [:> bp/H3 "Image"]
           [:img.fit {:src (:src image) :alt (:alt image)}]
           [:span.bp3-ui-text (:alt image)]]
          [:> bp/Card {:className "bp3-skeleton"}
           [:> bp/H3 "Loading"]
-          [:img.fit {:src (:src image) :alt (:alt image)}]
+          [:span.bp3-ui-text "text"]])
+
+       (if-let [audios (not-empty (:recordings media))]
+         [:> bp/Card {:className "my1"}
+          [:> bp/H3 "Sounds"]
+          (for [audio audios]
+            [:div.mb1
+             [:> bp/H4 (:rec audio)]
+             [:p.bp3-ui-text (str (:date audio) ", " (:loc audio) ", " (:cnt audio) " | " (:length audio))]
+             [:audio {:src (:file audio) :controls 1 :preload "none"}]])
+          ]
+         [:> bp/Card {:className "bp3-skeleton"}
+          [:> bp/H3 "Loading"]
           [:span.bp3-ui-text "text"]])
 
        [:> bp/Card {:className "my1"}
