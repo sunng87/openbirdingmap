@@ -55,7 +55,8 @@
             [:div.mb1
              [:> bp/H4 (:rec audio)]
              [:p.bp3-ui-text (str (:date audio) ", " (:loc audio) ", " (:cnt audio) " | " (:length audio))]
-             [:audio {:src (:file audio) :controls 1 :preload "none"}]])
+             [:audio {:src (:file audio) :controls 1 :preload "none"}]
+             [:img.fit {:src (-> audio :sono :full) :alt "sono"}]])
           ]
          [:> bp/Card {:className "bp3-skeleton"}
           [:> bp/H3 "Loading"]
