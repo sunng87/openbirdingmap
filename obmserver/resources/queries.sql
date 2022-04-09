@@ -21,3 +21,7 @@ SELECT * FROM obm_species WHERE id = :id;
 -- :name find-records-by-species-and-locality :? :*
 -- :doc filter records by species and locality
 SELECT * FROM obm_record WHERE locality_id = :locality_id AND species_id = :species_id order by record_date;
+
+-- :name find-localities-records-by-species :? :*
+-- :doc find all localities with given species_id
+SELECT locality_id, c, l.lname FROM (SELECT locality_id, count(*) AS c FROM obm_record WHERE species_id = :species_id group by locality_id) r INNER JOIN obm_location l on r.locality_id = l.id where l.state_code = :state_code;

@@ -23,12 +23,17 @@
         locality-id (-> req :params :locality_id)
         ;; query
         species (db/find-species-by-id {:id species-id})
-        records (when locality-id
-                  (db/find-records-by-species-and-locality {:species_id species-id
-                                                            :locality_id locality-id}))]
-    (resp/response {:results {:species species
-                              :records records}})))
+        records (db/find-records-by-species-and-locality {:species_id species-id
+                                                          :locality_id locality-id})
 
+        current-state-code (:state_code (db/find-locality-by-id {:id locality-id}))
+        other-localities-and-count (db/find-localities-records-by-species {:species_id species-id
+                                                                           :state_code current-state-code})]
+    (resp/response {:results {:species species
+                              :records records
+                              :other_localities other-localities-and-count}})))
+
+;; deprecated
 (defn get-species-image [req]
   (let [species-id (-> req :path-params :species_id)]
     (resp/response {:results {:image (craw/images species-id)}})))
