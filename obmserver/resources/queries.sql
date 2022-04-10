@@ -24,4 +24,4 @@ SELECT * FROM obm_record WHERE locality_id = :locality_id AND species_id = :spec
 
 -- :name find-localities-records-by-species :? :*
 -- :doc find all localities with given species_id
-SELECT locality_id, c, l.lname FROM (SELECT locality_id, count(*) AS c FROM obm_record WHERE species_id = :species_id group by locality_id) r INNER JOIN obm_location l on r.locality_id = l.id where l.state_code = :state_code;
+SELECT locality_id, c, l.lname FROM (SELECT locality_id, count(*) AS c FROM obm_record WHERE species_id = :species_id GROUP BY locality_id) r INNER JOIN obm_location l ON r.locality_id = l.id WHERE l.state_code = :state_code AND l.ltype = 'H' ORDER BY c DESC;
