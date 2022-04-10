@@ -14,6 +14,7 @@
         species (-> @species-info :current-species :species)
         records (-> @species-info :current-species :records)
         locality (-> @species-info :current-locality :locality)
+        other_localities (-> @species-info :current-species :other_localities)
         media (-> @species-info :current-species-media)]
     (when species
       [:div.p2
@@ -78,6 +79,16 @@
                   [:td (first (cstring/split (:record_date obs) #"T"))]
                   [:td [:b (:record_count obs)]]
                   [:td (:observer_id obs)]])
-               records)]]]])))
+               records)]]]
+
+       [:> bp/Card {:className "my1"}
+        [:> bp/H3 "Also Seen at"]
+        [:ul
+         (map (fn [l]
+           [:li {:key (:locality_id l)}
+            [:a {:href (routes/url-for :locality :locality_id (:locality_id l))}
+             (:lname l)]
+            [:span.bp3-tag.bp3-round.bp3-minimal.ml1 (:c l) " times"]])
+              other_localities)]]])))
 
 (defmethod routes/panels :species-panel [] [species-panel])
