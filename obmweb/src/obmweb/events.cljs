@@ -37,7 +37,7 @@
                                fx [[:dispatch [::request-species
                                                locality-id
                                                (-> route :route-params :species_id)]]]
-                               fx (if-not (:current-locality db)
+                               fx (if-not (= (-> db :current-locality :locality :id) locality-id)
                                     (conj fx [:dispatch [::request-locality locality-id]])
                                     fx)]
                            {:db new-db :fx fx})

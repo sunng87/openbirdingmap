@@ -86,7 +86,7 @@
         [:ul
          (map (fn [l]
            [:li {:key (:locality_id l)}
-            [:a {:href (routes/url-for :locality :locality_id (:locality_id l))}
+            [:a {:href (routes/url-for :species :locality_id (:locality_id l) :species_id (:id species))}
              (:lname l)]
             [:span.bp3-tag.bp3-round.bp3-minimal.ml1 (:c l) " times"]])
               other_localities)]]])))

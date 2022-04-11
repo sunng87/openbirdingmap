@@ -31,41 +31,44 @@
 
 
 (defn breadcrumbs [state panel locality species]
-  (let [loading? (re-frame/subscribe [::subs/loading?])
-        state (re-frame/subscribe [::subs/current-state])
-        panel (re-frame/subscribe [::subs/active-panel])
-        locality (re-frame/subscribe [::subs/current-locality])
-        species (re-frame/subscribe [::subs/current-species])
-        home {:text (->> supported-states (filter #(= (:id %) @state)) first :label)
-              :href (routes/url-for :home)}
-        items (case @panel
-                :home-panel [(assoc home :current true)]
-                :locality-panel (conj [home] (when-let [locality-info (:locality @locality)]
-                                               {:text (:lname locality-info)
-                                                :href (routes/url-for :locality :locality_id (:id locality-info))
-                                                :current true}))
-                :species-panel (conj [home]
-                                     (when-let [locality (-> @species :current-locality :locality)]
-                                       {:text (:lname locality)
-                                        :href (routes/url-for :locality :locality_id (:id locality))})
-                                     (when-let [species-info (-> @species :current-species :species)]
-                                       {:text (-> species-info :cname)
-                                        :href (routes/url-for :species
-                                                              :locality_id (-> @species :current-locality :locality :id)
-                                                              :species_id (-> species-info :id))
-                                        :current true}))
-                ;; not a information panel, :about for example
-                nil)
-        ;; remove nil items
-        items (filter some? items)]
-    (when (and (not @loading?) (not-empty items))
-      (let [item-renderer (fn [item]
-                            (reagent/as-element [:> bp/Breadcrumb {:href (.-href item)
-                                                                   :text (.-text item)
-                                                                   :current (.-current item)}]))]
-        [:div.p2.bp3-text-small
-         [:> bp/Breadcrumbs {:items items
-                             :breadcrumbRenderer item-renderer}]]))))
+  (when-not @(re-frame/subscribe [::subs/loading?])
+    (let [state (re-frame/subscribe [::subs/current-state])
+          panel (re-frame/subscribe [::subs/active-panel])
+          locality (re-frame/subscribe [::subs/current-locality])
+          species (re-frame/subscribe [::subs/current-species])
+          home {:text (->> supported-states (filter #(= (:id %) @state)) first :label)
+                :href (routes/url-for :home)}
+          items (case @panel
+                  :home-panel [(assoc home :current true)]
+                  :locality-panel (conj [home] (when-let [locality-info (:locality @locality)]
+                                                 {:text (:lname locality-info)
+                                                  :href (routes/url-for :locality :locality_id (:id locality-info))
+                                                  :current true}))
+                  :species-panel (conj [home]
+                                       (when-let [locality (-> @species :current-locality :locality)]
+                                         {:text (:lname locality)
+                                          :href (routes/url-for :locality :locality_id (:id locality))})
+                                       ;; double check species-info
+                                       ;; and locality
+                                       (when-let [species-info (-> @species :current-species :species)]
+                                         (when-let [locality (-> @species :current-locality :locality)]
+                                           {:text (-> species-info :cname)
+                                            :href (routes/url-for :species
+                                                                  :locality_id (-> @species :current-locality :locality :id)
+                                                                  :species_id (-> species-info :id))
+                                            :current true})))
+                  ;; not a information panel, :about for example
+                  nil)
+          ;; remove nil items
+          items (filter some? items)]
+      (when (not-empty items)
+        (let [item-renderer (fn [item]
+                              (reagent/as-element [:> bp/Breadcrumb {:href (.-href item)
+                                                                     :text (.-text item)
+                                                                     :current (.-current item)}]))]
+          [:div.p2.bp3-text-small
+           [:> bp/Breadcrumbs {:items items
+                               :breadcrumbRenderer item-renderer}]])))))
 
 (defn navbar []
   (let [state (re-frame/subscribe [::subs/current-state])]
