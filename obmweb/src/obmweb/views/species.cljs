@@ -19,7 +19,7 @@
         [:a {:href "#" :on-click #(swap! sono-toggle not)} "sono"]]
        [:audio {:src (:file audio) :controls 1 :preload "none"}]
        [:> bp/Collapse {:isOpen @sono-toggle}
-        [:img.fit {:src (-> audio :sono :full) :alt "sono"}]]])))
+        [:img.fit.p1 {:src (-> audio :sono :full) :alt "sono"}]]])))
 
 (defn species-panel []
   (let [species-info (re-frame/subscribe [::subs/current-species])
