@@ -1,5 +1,6 @@
 (ns obmweb.views.species
   (:require [re-frame.core :as re-frame]
+            [reagent.core :as r]
             ["@blueprintjs/core" :as bp]
             [goog.string :as gstring]
             [goog.string.format]
@@ -7,6 +8,18 @@
             [obmweb.events :as events]
             [obmweb.subs :as subs]
             [obmweb.routes :as routes]))
+
+(defn- audio-and-sono-view [audio]
+  (let [sono-toggle (r/atom false)]
+    (fn []
+      [:<>
+       [:> bp/H4 (:rec audio)]
+       [:p.bp3-ui-text
+        (str (:date audio) ", " (:loc audio) ", " (:cnt audio) " | " (:length audio)) " | "
+        [:a {:href "#" :on-click #(swap! sono-toggle not)} "sono"]]
+       [:audio {:src (:file audio) :controls 1 :preload "none"}]
+       [:> bp/Collapse {:isOpen @sono-toggle}
+        [:img.fit {:src (-> audio :sono :full) :alt "sono"}]]])))
 
 (defn species-panel []
   (let [species-info (re-frame/subscribe [::subs/current-species])
@@ -52,13 +65,10 @@
        (if-let [audios (not-empty (:recordings media))]
          [:> bp/Card {:className "my1"}
           [:> bp/H3 "Sounds"]
-          (for [audio audios]
-            [:div.mb1
-             [:> bp/H4 (:rec audio)]
-             [:p.bp3-ui-text (str (:date audio) ", " (:loc audio) ", " (:cnt audio) " | " (:length audio))]
-             [:audio {:src (:file audio) :controls 1 :preload "none"}]
-             [:img.fit {:src (-> audio :sono :full) :alt "sono"}]])
-          ]
+          (doall
+           (for [audio audios]
+             [:div.mb2 {:key (:id audio)}
+              [audio-and-sono-view audio]]))]
          [:> bp/Card {:className "bp3-skeleton"}
           [:> bp/H3 "Loading"]
           [:span.bp3-ui-text "text"]])

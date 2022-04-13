@@ -36,7 +36,7 @@
 
 (defn parse-recordings [data]
   (when-let [recordings (not-empty (:recordings data))]
-    (take 5 (map #(select-keys % [:file :cnt :rec :loc :length :date :call :sono]) recordings))))
+    (take 5 (map #(select-keys % [:file :cnt :rec :loc :length :date :call :sono :id]) recordings))))
 
 (defn recordings [species-name]
   (-> (query-xeno-canto-url species-name)
