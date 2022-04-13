@@ -29,7 +29,7 @@
         locality (-> @species-info :current-locality :locality)
         other_localities (-> @species-info :current-species :other_localities)
         media (-> @species-info :current-species-media)]
-    (when species
+    (when (and species locality)
       [:div.p2
        [:h2.bp3-heading  (:cname species)]
        [:p
