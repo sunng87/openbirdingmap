@@ -1,5 +1,23 @@
 ## list localities
-GET http://localhost:8080/localities/CN-11
+GET http://localhost:8080/api/localities/CN-11
 
 ## list species by locality
-GET http://localhost:8080/locality/L10139507
+GET http://localhost:8080/api/locality/L10139507
+
+## list species by locality
+GET http://localhost:8080/api/locality/L10139507?month=3
+
+## get species info
+GET http://localhost:8080/api/species/10843?locality_id=L10488106
+
+## get species image
+GET http://localhost:8080/api/species/barswa/image
+
+## get species image
+GET http://localhost:8080/api/species/11575/media
+
+## MediaWiki Image API
+GET https://en.wikipedia.org/w/api.php?action=query&format=json&titles=Peregrine%20Falcon&prop=images
+
+## Xeno Canto
+GET https://www.xeno-canto.org/api/2/recordings?query=Eastern+Buzzard
