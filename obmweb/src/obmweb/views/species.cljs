@@ -10,16 +10,29 @@
             [obmweb.routes :as routes]))
 
 (defn- audio-and-sono-view [audio]
-  (let [sono-toggle (r/atom false)]
+  (let [sono-toggle (r/atom false)
+        audio-icon (r/atom "play")
+        player (js/Audio.)]
+    (set! (.-preload player) "none")
+    (set! (.-src player) (:file audio))
+    (.addEventListener player "play" #(reset! audio-icon "pause"))
+    (.addEventListener player "pause" #(reset! audio-icon "play"))
+
+    ;; TODO: hook for unmount, stop audio
     (fn []
       [:<>
-       [:> bp/H4 (:rec audio)]
-       [:p.bp3-ui-text
-        (str (:date audio) ", " (:loc audio) ", " (:cnt audio) " | " (:length audio)) " | "
-        [:a {:href "#" :on-click #(swap! sono-toggle not)} "sono"]]
-       [:audio {:src (:file audio) :controls 1 :preload "none"}]
-       [:> bp/Collapse {:isOpen @sono-toggle}
-        [:img.fit.p1 {:src (-> audio :sono :full) :alt "sono"}]]])))
+       [:div.flex.items-start
+        [:div.mr2 [:> bp/Button {:icon @audio-icon :large true :outlined true
+                                 :on-click #(if (.-paused player)
+                                              (.play player)
+                                              (.pause player))}]]
+        [:div
+         [:> bp/H4 (:rec audio)]
+         [:p.bp3-ui-text
+          (str (:date audio) ", " (:loc audio) ", " (:cnt audio) " | " (:length audio)) " | "
+          [:a {:href "#" :on-click #(swap! sono-toggle not)} "sono"]]
+         [:> bp/Collapse {:isOpen @sono-toggle}
+          [:img.fit.p1 {:src (-> audio :sono :full) :alt "sono"}]]]]])))
 
 (defn species-panel []
   (let [species-info (re-frame/subscribe [::subs/current-species])
