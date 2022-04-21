@@ -12,25 +12,23 @@
 (defn- audio-and-sono-view [audio]
   (let [sono-toggle (r/atom false)
         audio-icon (r/atom "play")
-        player (js/Audio.)]
-    (set! (.-preload player) "none")
-    (set! (.-src player) (:file audio))
-    (.addEventListener player "play" #(reset! audio-icon "pause"))
-    (.addEventListener player "pause" #(reset! audio-icon "play"))
-
-    ;; TODO: hook for unmount, stop audio
+        player (atom nil)]
     (fn []
       [:<>
        [:div.flex.items-start
         [:div.mr2 [:> bp/Button {:icon @audio-icon :large true :outlined true
-                                 :on-click #(if (.-paused player)
-                                              (.play player)
-                                              (.pause player))}]]
+                                 :on-click #(if (.-paused @player)
+                                              (.play @player)
+                                              (.pause @player))}]]
         [:div
          [:> bp/H4 (:rec audio)]
          [:p.bp3-ui-text
           (str (:date audio) ", " (:loc audio) ", " (:cnt audio) " | " (:length audio)) " | "
           [:a {:href "#" :on-click #(swap! sono-toggle not)} "sono"]]
+         [:audio.hide {:src (:file audio) :preload "none"
+                       :ref #(reset! player %)
+                       :on-play #(reset! audio-icon "pause")
+                       :on-pause #(reset! audio-icon "play")}]
          [:> bp/Collapse {:isOpen @sono-toggle}
           [:img.fit.p1 {:src (-> audio :sono :full) :alt "sono"}]]]]])))
 
