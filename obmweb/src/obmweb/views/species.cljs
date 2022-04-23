@@ -9,9 +9,12 @@
             [obmweb.subs :as subs]
             [obmweb.routes :as routes]))
 
+(def ^:const icon-play "play")
+(def ^:const icon-pause "pause")
+
 (defn- audio-and-sono-view [audio]
   (let [sono-toggle (r/atom false)
-        audio-icon (r/atom "play")
+        audio-icon (r/atom icon-play)
         player (atom nil)]
     (fn []
       [:<>
@@ -27,8 +30,8 @@
           [:a {:href "#" :on-click #(swap! sono-toggle not)} "sono"]]
          [:audio.hide {:src (:file audio) :preload "none"
                        :ref #(reset! player %)
-                       :on-play #(reset! audio-icon "pause")
-                       :on-pause #(reset! audio-icon "play")}]
+                       :on-play #(reset! audio-icon icon-pause)
+                       :on-pause #(reset! audio-icon icon-play)}]
          [:> bp/Collapse {:isOpen @sono-toggle}
           [:img.fit.p1 {:src (-> audio :sono :full) :alt "sono"}]]]]])))
 
