@@ -23,7 +23,6 @@
                      :itemRenderer item-renderer
                      :filterable false
                      :onItemSelect (fn [item]
-                                     (.log js/console item)
                                      (re-frame/dispatch [::events/load-localities (.-id item)])
                                      (routes/navigate! :home))}
      [:> bp/Button {:text (:label initial-item)
