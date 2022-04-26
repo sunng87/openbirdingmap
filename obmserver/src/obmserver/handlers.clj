@@ -12,9 +12,16 @@
 
 (defn list-species [req]
   (let [locality-id (-> req :path-params :locality_id)
+        month (-> req :params :month)
+
         locality (db/find-locality-by-id {:id locality-id})
-        species-ids (db/find-species-by-locality-id {:locality_id locality-id})
-        species (db/find-species-by-ids {:ids (mapv :species_id species-ids)})]
+        species-ids (if (nil? month)
+                      (db/find-species-by-locality-id {:locality_id locality-id})
+                      (db/find-species-by-locality-id-and-month {:locality_id locality-id
+                                                                 :month month}))
+        species (if (not-empty species-ids)
+                  (db/find-species-by-ids {:ids (mapv :species_id species-ids)})
+                  [])]
     (resp/response {:results {:locality locality
                               :species species}})))
 
