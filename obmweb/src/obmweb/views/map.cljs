@@ -5,6 +5,7 @@
    [obmweb.routes :as routes]
    [obmweb.subs :as subs]
    ["react-leaflet" :as leaflet]
+   ["@blueprintjs/core" :as bp]
    ["leaflet" :as ll]))
 
 (defn mapLocation []
@@ -22,7 +23,8 @@
                                   "iconSize" (ll/Point. 32 32)})
               :key (:id l)}
              [:> leaflet/Popup {:key (:id l)}
-              [:a {:href (routes/url-for :locality :locality_id (:id l))} (:lname l)]]])
+              [:a {:href (routes/url-for :locality :locality_id (:id l))}
+               [:> bp/Icon {:icon "map-marker" :className "mr1"}] (:lname l)]]])
          localities)))
 
 (defn centerToLocalities [{bounds :bounds}]
