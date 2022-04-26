@@ -80,9 +80,10 @@
 
 (re-frame/reg-event-fx
  ::request-locality
- (fn-traced [{:keys [db]} [_ locality-id]]
+ (fn-traced [{:keys [db]} [_ locality-id by-month]]
             {:http-xhrio {:method :get
                           :uri (url "/locality/%s" locality-id)
+                          :params (when by-month {:month by-month})
                           :format (ajax/json-request-format)
                           :response-format (ajax/json-response-format {:keywords? true})
                           :on-success [::locality-loaded]
