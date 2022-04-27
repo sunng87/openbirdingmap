@@ -24,10 +24,15 @@
                                               (.play @player)
                                               (.pause @player))}]]
         [:div
-         [:> bp/H4 (:rec audio)]
-         [:p.bp3-ui-text
-          (str (:date audio) ", " (:loc audio) ", " (:cnt audio) " | " (:length audio)) " | "
-          [:a {:href "#" :on-click #(swap! sono-toggle not)} "sono"]]
+         [:> bp/H4 (:type audio)]
+         [:p.bp3-running-text
+          [:span.mr2 [:> bp/Icon {:icon "record"} :className "mr1"] (:rec audio)]
+          [:span.mr2 [:> bp/Icon {:icon "calendar" :className "mr1"}] (:date audio)]
+          [:span.mr2 [:> bp/Icon {:icon "time" :className "mr1"}] (:length audio)]
+          [:br]
+          [:span.mr2 [:> bp/Icon {:icon "map-marker" :className "mr1"}] (str (:loc audio) ", " (:cnt audio))]
+          [:span.mr2 [:> bp/Icon {:icon "timeline-bar-chart" :className "mr1"}]
+           [:a {:href "#" :on-click #(swap! sono-toggle not)} "sono"]]]
          [:audio.hide {:src (:file audio) :preload "none"
                        :ref #(reset! player %)
                        :on-play #(reset! audio-icon icon-pause)
