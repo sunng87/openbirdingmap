@@ -16,7 +16,7 @@
         locality (:locality @locality-info)
         species (:species @locality-info)]
     [:div.p2
-     [:h2.bp3-heading (:lname locality)]
+     [:h2.bp4-heading (:lname locality)]
      [:div.mb2
       [:> bp/Icon {:icon "calendar" :className "mr1"}] "Filter by month:"
       [:> bp/HTMLSelect

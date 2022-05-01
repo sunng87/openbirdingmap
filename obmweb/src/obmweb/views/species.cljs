@@ -25,7 +25,7 @@
                                               (.pause @player))}]]
         [:div
          [:> bp/H4 (:type audio)]
-         [:p.bp3-running-text
+         [:p.bp4-running-text
           [:span.mr2 [:> bp/Icon {:icon "record"} :className "mr1"] (:rec audio)]
           [:span.mr2 [:> bp/Icon {:icon "calendar" :className "mr1"}] (:date audio)]
           [:span.mr2 [:> bp/Icon {:icon "time" :className "mr1"}] (:length audio)]
@@ -50,11 +50,11 @@
         media (-> @species-info :current-species-media)]
     (when (and species locality)
       [:div.p2
-       [:h2.bp3-heading  (:cname species)]
+       [:h2.bp4-heading  (:cname species)]
        [:p
-        [:span.bp3-ui-text (:local_name species)]
+        [:span.bp4-ui-text (:local_name species)]
         " | "
-        [:span.bp3-ui-text (:sname species)]]
+        [:span.bp4-ui-text (:sname species)]]
        [:p
         [:a {:href (gstring/format "https://ebird.org/species/%s/%s"
                                    (:species_code species)
@@ -76,10 +76,10 @@
          [:> bp/Card {:className "my1"}
           [:> bp/H3 "Image"]
           [:img.fit {:src (:src image) :alt (:alt image)}]
-          [:span.bp3-ui-text (:alt image)]]
-         [:> bp/Card {:className "bp3-skeleton"}
+          [:span.bp4-ui-text (:alt image)]]
+         [:> bp/Card {:className "bp4-skeleton"}
           [:> bp/H3 "Loading"]
-          [:span.bp3-ui-text "text"]])
+          [:span.bp4-ui-text "text"]])
 
        (if-let [audios (not-empty (:recordings media))]
          [:> bp/Card {:className "my1"}
@@ -88,15 +88,15 @@
            (for [audio audios]
              [:div.mb2 {:key (:id audio)}
               [audio-and-sono-view audio]]))]
-         [:> bp/Card {:className "bp3-skeleton"}
+         [:> bp/Card {:className "bp4-skeleton"}
           [:> bp/H3 "Loading"]
-          [:span.bp3-ui-text "text"]])
+          [:span.bp4-ui-text "text"]])
 
        [:> bp/Card {:className "my1"}
         [:> bp/H3 "Observations"]
         [:a {:href (routes/url-for :locality :locality_id (:id locality))}
          (:lname locality)]
-        [:table.bp3-html-table.bp3-html-table-striped.bp3-html-table-bordered
+        [:table.bp4-html-table.bp4-html-table-striped.bp4-html-table-bordered
          [:thead
           [:tr
            [:td "Date"]
@@ -117,7 +117,7 @@
            [:li {:key (:locality_id l)}
             [:a {:href (routes/url-for :species :locality_id (:locality_id l) :species_id (:id species))}
              (:lname l)]
-            [:span.bp3-tag.bp3-round.bp3-minimal.ml1 (:c l) " times"]])
+            [:span.bp4-tag.bp4-round.bp4-minimal.ml1 (:c l) " times"]])
               other_localities)]]])))
 
 (defmethod routes/panels :species-panel [] [species-panel])

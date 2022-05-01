@@ -29,7 +29,7 @@ footer {
     overflow: auto;
 }
 
-.bp3-transition-container {
+.bp4-transition-container {
     z-index: 2002;
 }
 
@@ -54,7 +54,7 @@ footer {
         z-index: 2001;
     }
 
-    div.bp3-navbar-group:last-of-type {
+    div.bp4-navbar-group:last-of-type {
         display: none;
     }
 }

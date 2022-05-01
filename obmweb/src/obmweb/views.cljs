@@ -18,8 +18,8 @@
   (let [localities (re-frame/subscribe [::subs/localities])]
     [:div.p2
      (if-let [l (first @localities)]
-       [:h2.bp3-heading (str (:state_name l) ", " (:country l))]
-       [:h2.bp3-heading.bp3-skeleton "not loaded"])
+       [:h2.bp4-heading (str (:state_name l) ", " (:country l))]
+       [:h2.bp4-heading.bp4-skeleton "not loaded"])
      [:ul
       (map (fn [l]
              [:li {:key (:id l)}
