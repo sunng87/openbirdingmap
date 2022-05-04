@@ -26,6 +26,10 @@ SELECT * FROM obm_species WHERE id = :id;
 -- :doc filter records by species and locality
 SELECT * FROM obm_record WHERE locality_id = :locality_id AND species_id = :species_id order by record_date;
 
+-- :name stat-species-records-by-week :? :*
+-- :doc find aggregated number of records by week
+SELECT week(record_date) AS w, count(1) AS c FROM obm_record WHERE locality_id IN (SELECT locality_id FROM obm_location WHERE state_code = :state_code) AND species_id = :species_id GROUP BY w;
+
 -- :name find-localities-records-by-species :? :*
 -- :doc find all localities with given species_id
 SELECT locality_id, c, l.lname FROM (SELECT locality_id, count(*) AS c FROM obm_record WHERE species_id = :species_id GROUP BY locality_id) r INNER JOIN obm_location l ON r.locality_id = l.id WHERE l.state_code = :state_code AND l.ltype = 'H' ORDER BY c DESC;
