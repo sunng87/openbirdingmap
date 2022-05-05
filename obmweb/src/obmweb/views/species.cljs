@@ -11,15 +11,19 @@
 
 (def ^:const icon-play "play")
 (def ^:const icon-pause "pause")
+(def ^:const icon-disable "disable")
 
 (defn- audio-and-sono-view [audio]
   (let [sono-toggle (r/atom false)
-        audio-icon (r/atom icon-play)
+        audio-icon (r/atom (if (not-empty (:file audio))
+                             icon-play
+                             icon-disable))
         player (atom nil)]
     (fn []
       [:<>
        [:div.flex.items-start
         [:div.mr2 [:> bp/Button {:icon @audio-icon :large true :outlined true
+                                 :disabled (empty? (:file audio))
                                  :on-click #(if (.-paused @player)
                                               (.play @player)
                                               (.pause @player))}]]

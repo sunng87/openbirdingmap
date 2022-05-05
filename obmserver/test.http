@@ -21,3 +21,6 @@ GET https://en.wikipedia.org/w/api.php?action=query&format=json&titles=Peregrine
 
 ## Xeno Canto
 GET https://www.xeno-canto.org/api/2/recordings?query=Eastern+Buzzard
+
+## Xeno Canto data disabled
+GET https://www.xeno-canto.org/api/2/recordings?query=Chestnut+Bunting
