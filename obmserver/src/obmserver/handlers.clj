@@ -35,10 +35,17 @@
 
         current-state-code (:state_code (db/find-locality-by-id {:id locality-id}))
         other-localities-and-count (db/find-localities-records-by-species {:species_id species-id
-                                                                           :state_code current-state-code})]
+                                                                           :state_code current-state-code})
+        species-weekly-raw-stats (db/stat-species-records-by-week {:species_id species-id
+                                                                   :state_code current-state-code})
+        weekly-stats-array (let [weeks (int-array 53 0)]
+                             (doseq [{w :w c :c} species-weekly-raw-stats]
+                               (aset weeks w c))
+                             (seq weeks))]
     (resp/response {:results {:species species
                               :records records
-                              :other_localities other-localities-and-count}})))
+                              :other_localities other-localities-and-count
+                              :weekly_stats weekly-stats-array}})))
 
 ;; deprecated
 (defn get-species-image [req]

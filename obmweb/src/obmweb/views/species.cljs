@@ -1,6 +1,7 @@
 (ns obmweb.views.species
   (:require [re-frame.core :as re-frame]
             [reagent.core :as r]
+            ["chart.js" :as chart]
             ["@blueprintjs/core" :as bp]
             [goog.string :as gstring]
             [goog.string.format]
@@ -44,13 +45,30 @@
          [:> bp/Collapse {:isOpen @sono-toggle}
           [:img.fit.p1 {:src (-> audio :sono :full) :alt "sono"}]]]]])))
 
+(defn- render-chart [weekly-stats]
+  (let [context (.getContext (.getElementById js/document "chart-view-canvas") "2d")
+        chart-data {:type "bar"
+                    :data {:labels (mapv #(str "W" %) (range 0 54))
+                           :datasets [{:data weekly-stats
+                                       :label "Weekly record stats"
+                                       :backgroundColor "#D3D8DE"}]}}]
+      (js/Chart. context (clj->js chart-data))))
+
+(defn- chart-view [weekly-stats]
+  (r/create-class
+   {:component-did-mount #(render-chart weekly-stats)
+    :display-name "weekly-stats-chart-view"
+    :reagent-render (fn []
+                      [:canvas {:id "chart-view-canvas" :height "100px"}])}))
+
 (defn species-panel []
   (let [species-info (re-frame/subscribe [::subs/current-species])
 
         species (-> @species-info :current-species :species)
         records (-> @species-info :current-species :records)
         locality (-> @species-info :current-locality :locality)
-        other_localities (-> @species-info :current-species :other_localities)
+        other-localities (-> @species-info :current-species :other_localities)
+        weekly-stats (-> @species-info :current-species :weekly_stats)
         media (-> @species-info :current-species-media)]
     (when (and species locality)
       [:div.p2
@@ -122,6 +140,11 @@
             [:a {:href (routes/url-for :species :locality_id (:locality_id l) :species_id (:id species))}
              (:lname l)]
             [:span.bp3-tag.bp3-round.bp3-minimal.ml1 (:c l) " times"]])
-              other_localities)]]])))
+              other-localities)]]
+
+       [:> bp/Card {:className "my1"}
+        [:> bp/H3 "Weekly Recording Stats"]
+        [:div
+         [chart-view weekly-stats]]]])))
 
 (defmethod routes/panels :species-panel [] [species-panel])
