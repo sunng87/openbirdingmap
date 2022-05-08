@@ -134,6 +134,7 @@
 
        [:> bp/Card {:className "my1"}
         [:> bp/H3 "Also Seen at"]
+        [:p.bp3-ui-text (str (:state_name locality) ", " (:country locality))]
         [:ul
          (map (fn [l]
            [:li {:key (:locality_id l)}
@@ -144,6 +145,7 @@
 
        [:> bp/Card {:className "my1"}
         [:> bp/H3 "Weekly Recording Stats"]
+        [:p.bp3-ui-text (str (:state_name locality) ", " (:country locality))]
         [:div
          [chart-view weekly-stats]]]])))
 
