@@ -7,7 +7,12 @@
 
 (defn list-localities [req]
   (let [state-code (-> req :path-params :state_code)
-        localities (db/find-localities-by-state-id {:state_code state-code})]
+        localities (db/find-localities-by-state-id {:state_code state-code})
+        locality-species-stats (db/stat-species-by-localities {:locality_ids (mapv :id localities)})
+        locality-species-stats-map (into {} (map #(vector (:locality_id %) (:c %)) locality-species-stats))
+        localities (->> localities
+                        (mapv #(assoc % :species_count (get locality-species-stats-map (:id %) 0)))
+                        (sort-by :species_count >))]
     (resp/response {:results localities})))
 
 (defn list-species [req]
