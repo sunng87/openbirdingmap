@@ -24,7 +24,8 @@
       (map (fn [l]
              [:li {:key (:id l)}
               [:a {:href (routes/url-for :locality :locality_id (:id l))}
-               (:lname l)]])
+               (:lname l)]
+              [:span.bp3-tag.bp3-round.bp3-minimal.ml1 (:species_count l) " species"]])
            @localities)]]))
 
 (defn home-panel []
