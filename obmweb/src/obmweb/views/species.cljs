@@ -45,13 +45,20 @@
          [:> bp/Collapse {:isOpen @sono-toggle}
           [:img.fit.p1 {:src (-> audio :sono :full) :alt "sono"}]]]]])))
 
+(defn- current-week []
+  (let [today (js/Date.)
+        start-of-year (js/Date. (.getFullYear today) 0 1)
+        days-since (Math/floor (/ (- today start-of-year) (* 24 60 60 1000)))]
+    (Math/ceil (/ days-since 7))))
+
 (defn- render-chart [weekly-stats]
   (let [context (.getContext (.getElementById js/document "chart-view-canvas") "2d")
+        bg-color (update (into [] (repeat 53 "#D3D8DE")) (current-week) (constantly "#738091"))
         chart-data {:type "bar"
                     :data {:labels (mapv #(str "W" %) (range 0 54))
                            :datasets [{:data weekly-stats
                                        :label "Weekly record stats"
-                                       :backgroundColor "#D3D8DE"}]}}]
+                                       :backgroundColor bg-color}]}}]
       (js/Chart. context (clj->js chart-data))))
 
 (defn- chart-view [weekly-stats]
