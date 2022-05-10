@@ -18,10 +18,16 @@
         image-info-meta (.. soup (select "meta[property=og:image:alt]") (first) (attr "content"))]
     {:src image-meta :alt image-info-meta}))
 
+(defn parse-body-images [html]
+  (let [soup (Jsoup/parse ^String html)
+        images (.select soup "div.MediaFeed:first-of-type div.MediaThumbnail img")
+        labels (.select soup "div.MediaFeed:first-of-type h3.MediaFeedItem-title")]
+    (mapv #(hash-map :src (.attr %1 "src") :alt (.attr %1 "alt") :title (.text %2)) images labels)))
+
 (defn images [species-id]
   (-> (to-ebird-url species-id)
       fetch-html
-      parse-head-image))
+      parse-body-images))
 
 (defn query-xeno-canto-url [sname]
   (format "https://www.xeno-canto.org/api/2/recordings?query=%s"

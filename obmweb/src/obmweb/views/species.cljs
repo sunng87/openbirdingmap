@@ -77,7 +77,7 @@
         other-localities (-> @species-info :current-species :other_localities)
         weekly-stats (-> @species-info :current-species :weekly_stats)
         media (-> @species-info :current-species-media)]
-    (when (and species locality)
+    (if (and species locality)
       [:div.p2
        [:h2.bp3-heading  (:cname species)]
        [:p
@@ -101,11 +101,20 @@
                                    (:cname species))}
          "xeno-canto.org"]]
 
-       (if-let [image (:image media)]
+       (if-let [images (not-empty (:images media))]
          [:> bp/Card {:className "my1"}
           [:> bp/H3 "Image"]
-          [:img.fit {:src (:src image) :alt (:alt image)}]
-          [:span.bp3-ui-text (:alt image)]]
+
+          [:> bp/Tabs {:id "image-tabs"}
+           (doall
+            (for [image (map-indexed #(assoc %2 :idx %1) images)]
+              [:> bp/Tab {:title (or (not-empty (:title image)) (:idx image))
+                          :key (:idx image)
+                          :id (str "image-tab-" (:idx image))
+                          :panel (r/as-element [:<>
+                                                [:img.fit {:src (:src image) :alt (:alt image)}]
+                                                [:span.bp3-ui-text (:alt image)]])}]))]]
+
          [:> bp/Card {:className "bp3-skeleton"}
           [:> bp/H3 "Loading"]
           [:span.bp3-ui-text "text"]])
@@ -154,6 +163,10 @@
         [:> bp/H3 "Weekly Recording Stats"]
         [:p.bp3-ui-text (str (:state_name locality) ", " (:country locality))]
         [:div
-         [chart-view weekly-stats]]]])))
+         [chart-view weekly-stats]]]]
+
+      ;; loading
+      [:div.p2
+       [:> bp/Spinner]])))
 
 (defmethod routes/panels :species-panel [] [species-panel])

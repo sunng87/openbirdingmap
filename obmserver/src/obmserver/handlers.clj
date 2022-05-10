@@ -65,7 +65,7 @@
         species-code (:species_code species)
         sci-name (:sname species)
 
-        image (m/future-with pool (craw/images species-code))
+        images (m/future-with pool (craw/images species-code))
         recordings (m/future-with pool (craw/recordings sci-name))]
-    (resp/response {:results {:image @image
+    (resp/response {:results {:images @images
                               :recordings @recordings}})))
