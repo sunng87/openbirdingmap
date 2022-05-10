@@ -113,7 +113,7 @@
                           :id (str "image-tab-" (:idx image))
                           :panel (r/as-element [:<>
                                                 [:img.fit {:src (:src image) :alt (:alt image)}]
-                                                [:span.bp3-ui-text (:alt image)]])}]))]]
+                                                [:p.bp3-ui-text (:alt image)]])}]))]]
 
          [:> bp/Card {:className "bp3-skeleton"}
           [:> bp/H3 "Loading"]
