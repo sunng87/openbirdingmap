@@ -45,9 +45,10 @@
          [:audio.hide {:src (:file audio) :preload "none"
                        :ref #(reset! player %)
                        :on-play #(reset! audio-icon icon-pause)
-                       :on-pause #(reset! audio-icon icon-play)}]
-         [:> bp/Collapse {:isOpen @sono-toggle}
-          [:img.fit.p1 {:src (-> audio :sono :full) :alt "sono"}]]]]])))
+                       :on-pause #(reset! audio-icon icon-play)}]]]
+       [:> bp/Collapse {:isOpen @sono-toggle}
+        [:div.overflow-auto.mt1
+         [:img {:src (-> audio :sono :full) :alt "sono"}]]]])))
 
 (defn- current-week []
   (let [today (js/Date.)
