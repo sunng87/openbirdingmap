@@ -26,7 +26,11 @@
         [:div.mr2 [:> bp/Button {:icon @audio-icon :large true :outlined true
                                  :disabled (empty? (:file audio))
                                  :on-click #(if (.-paused @player)
-                                              (.play @player)
+                                              (do
+                                                ;; pause other audios
+                                                (doseq [a (.querySelectorAll js/document "audio")]
+                                                  (.pause a))
+                                                (.play @player))
                                               (.pause @player))}]]
         [:div
          [:> bp/H4 (:type audio)]
