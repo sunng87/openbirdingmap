@@ -48,7 +48,7 @@
                        :on-pause #(reset! audio-icon icon-play)}]]]
        [:> bp/Collapse {:isOpen @sono-toggle}
         [:div.overflow-auto.mt1
-         [:img {:src (-> audio :sono :full) :alt "sono"}]]]])))
+         [:img.pr1.pl1 {:src (-> audio :sono :full) :alt "sono"}]]]])))
 
 (defn- current-week []
   (let [today (js/Date.)
@@ -110,7 +110,7 @@
          [:> bp/Card {:className "my1"}
           [:> bp/H3 "Image"]
 
-          [:> bp/Tabs {:id "image-tabs"}
+          [:> bp/Tabs {:id "image-tabs" :renderActiveTabPanelOnly true}
            (doall
             (for [image (map-indexed #(assoc %2 :idx %1) images)]
               [:> bp/Tab {:title (or (not-empty (:title image)) (:idx image))
@@ -165,7 +165,7 @@
               other-localities)]]
 
        [:> bp/Card {:className "my1"}
-        [:> bp/H3 "Weekly Recording Stats"]
+        [:> bp/H3 "Weekly Record Stats"]
         [:p.bp3-ui-text (str (:state_name locality) ", " (:country locality))]
         [:div
          [chart-view weekly-stats]]]]
