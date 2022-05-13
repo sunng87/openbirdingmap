@@ -67,5 +67,7 @@
 
         images (m/future-with pool (craw/images species-code))
         recordings (m/future-with pool (craw/recordings sci-name))]
-    (resp/response {:results {:images @images
-                              :recordings @recordings}})))
+    (->  {:results {:images @images
+                    :recordings @recordings}}
+         (resp/response)
+         (assoc-in [:headers "Cache-Control"] "public,max-age=3600,s-maxage=3600"))))
