@@ -5,7 +5,7 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.11.1"]
                  ;; web
-                 [info.sunng/ring-jetty9-adapter "0.17.5"]
+                 [info.sunng/ring-jetty9-adapter "0.17.6"]
                  [ring/ring-core "1.9.5"]
                  [ring/ring-json "0.5.1"]
                  [ring/ring-defaults "0.3.3"]
@@ -28,7 +28,7 @@
                  [org.apache.logging.log4j/log4j-slf4j18-impl "2.17.2"]
                  ;; web crawling
                  [clj-http "3.12.3"]
-                 [org.jsoup/jsoup "1.14.3"]
+                 [org.jsoup/jsoup "1.15.1"]
                  ;; parallel processing
                  [manifold "0.2.3"]]
   :main ^:skip-aot obmserver.core
