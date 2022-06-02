@@ -21,7 +21,8 @@
   (let [the-app (reitit/ring-handler
                  (reitit/router
                   ["/api"
-                   ["/localities/:state_code" {:get handlers/list-localities}]
+                   ["/state/:state_code" {:get handlers/get-state-info}]
+                   ["/localities/:state_code" {:get handlers/list-localities}] ;; deprecated
                    ["/locality/:locality_id" {:get handlers/list-species}]
                    ["/species/:species_id" {:get handlers/get-species}]
                    ["/species/:species_id/image" {:get handlers/get-species-image}] ;; deprecated

@@ -15,6 +15,20 @@
                         (sort-by :species_count >))]
     (resp/response {:results localities})))
 
+(defn get-state-info [req]
+  (let [state-code (-> req :path-params :state_code)
+        localities (db/find-localities-by-state-id {:state_code state-code})
+        locality-species-stats (db/stat-species-by-localities {:locality_ids (mapv :id localities)})
+        locality-species-stats-map (into {} (map #(vector (:locality_id %) (:c %)) locality-species-stats))
+        localities (->> localities
+                        (mapv #(assoc % :species_count (get locality-species-stats-map (:id %) 0)))
+                        (sort-by :species_count >))
+
+        species-ids (db/find-species-by-state-id {:state_code state-code})
+        species (db/find-species-by-ids {:ids (mapv :species_id species-ids)})]
+    (resp/response {:results {:localities localities
+                              :species species}})))
+
 (defn list-species [req]
   (let [locality-id (-> req :path-params :locality_id)
         month (-> req :params :month)

@@ -10,6 +10,10 @@ SELECT * FROM obm_location WHERE id = :id;
 -- :doc load species types by given locality id
 SELECT DISTINCT species_id FROM obm_record WHERE locality_id = :locality_id;
 
+-- :name find-species-by-state-id :? :*
+-- :doc load species types by given state id
+SELECT DISTINCT species_id FROM obm_record WHERE locality_id IN (SELECT id FROM obm_location WHERE state_code = :state_code AND ltype = 'H');
+
 -- :name find-species-by-locality-id-and-month :? :*
 -- :doc filter species types for locality by month
 SELECT DISTINCT species_id FROM obm_record WHERE locality_id = :locality_id AND month(record_date) = :month;

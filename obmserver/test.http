@@ -1,6 +1,9 @@
 ## list localities
 GET http://localhost:8080/api/localities/CN-11
 
+## state info api
+GET http://localhost:8080/api/state/CN-11
+
 ## list species by locality
 GET http://localhost:8080/api/locality/L10139507
 
