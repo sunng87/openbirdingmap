@@ -1,6 +1,7 @@
 (ns obmweb.views
   (:require
    [re-frame.core :as re-frame]
+   [reagent.core :as r]
    ["@blueprintjs/core" :as bp]
    [obmweb.events :as events]
    [obmweb.routes :as routes]
@@ -15,18 +16,35 @@
 ;; home
 
 (defn localities-list []
-  (let [localities (re-frame/subscribe [::subs/localities])]
+  (let [state (re-frame/subscribe [::subs/state])]
     [:div.p2
-     (if-let [l (first @localities)]
+     (if-let [l (-> @state :localities first)]
        [:h2.bp3-heading (str (:state_name l) ", " (:country l))]
        [:h2.bp3-heading.bp3-skeleton "not loaded"])
-     [:ul
-      (map (fn [l]
-             [:li {:key (:id l)}
-              [:a {:href (routes/url-for :locality :locality_id (:id l))}
-               (:lname l)]
-              [:span.bp3-tag.bp3-round.bp3-minimal.ml1 (:species_count l) " species"]])
-           @localities)]]))
+     [:> bp/Tabs {:id "state-tabs" :renderActiveTabPanelOnly true}
+
+      [:> bp/Tab {:title "Localities"
+                  :key "state-localities-tab"
+                  :id "state-localities-tab"
+                  :panel (r/as-element
+                          (when (not-empty (:localities @state))
+                            [:ul
+                             (for [l (:localities @state)]
+                               [:li {:key (str "locality-" (:id l))}
+                                [:a {:href (routes/url-for :locality :locality_id (:id l))}
+                                 (:lname l)]
+                                [:span.bp3-tag.bp3-round.bp3-minimal.ml1 (:species_count l) " species"]])]))}]
+      [:> bp/Tab {:title "Species"
+                  :key "state-species-tab"
+                  :id "state-species-tab"
+                  :panel (r/as-element
+                          (when (not-empty (:species @state))
+                            [:ul
+                             (for [s (:species @state)]
+                               [:li {:key (str "species-" (:id s))}
+                                [:a {:href "#"}
+                                 (:local_name s)]
+                                [:span.ml1 (:cname s)]])]))}]]]))
 
 (defn home-panel []
   [:div

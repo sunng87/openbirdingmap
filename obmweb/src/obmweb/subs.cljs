@@ -13,14 +13,15 @@
    (:active-panel db)))
 
 (re-frame/reg-sub
- ::localities
+ ::state
  (fn [db]
-   (:localities db)))
+   (:state db)))
 
 (re-frame/reg-sub
  ::map
  (fn [db]
-   (select-keys db [:bounds :localities])))
+   {:bounds (:bounds db)
+    :localities (-> db :state :localities)}))
 
 (re-frame/reg-sub
  ::current-state

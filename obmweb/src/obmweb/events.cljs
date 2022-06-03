@@ -44,15 +44,15 @@
                 {:db new-db}))))
 
 (re-frame/reg-event-fx
- ::load-localities
+ ::load-state
  (fn-traced [{:keys [db]} [_ state-code]]
             {:http-xhrio {:method :get
-                          :uri (url "/localities/%s" state-code)
+                          :uri (url "/state/%s" state-code)
                           :format (ajax/json-request-format)
                           :response-format (ajax/json-response-format {:keywords? true})
-                          :on-success [::localities-loaded]
-                          :on-failure [::localities-failed [::load-localities]]}
-             :db (assoc db :loading? true :current-state state-code :localities [])}))
+                          :on-success [::state-loaded]
+                          :on-failure [::state-failed [::load-state]]}
+             :db (assoc db :loading? true :current-state state-code :state [])}))
 
 (defn- centroid [localities]
   (if (not-empty localities)
@@ -63,19 +63,19 @@
     [0 0]))
 
 (re-frame/reg-event-db
- ::localities-loaded
+ ::state-loaded
  (fn-traced [db [_ response]]
             (assoc db
                    :loading? false
-                   :localities (:results response)
-                   :bounds (mapv #(vector (:lat %) (:lon %)) (:results response)))))
+                   :state (:results response)
+                   :bounds (mapv #(vector (:lat %) (:lon %)) (-> response :results :localities)))))
 
 (re-frame/reg-event-db
- ::localities-failed
+ ::state-failed
  (fn-traced [db _]
             (assoc db
                    :loading? false
-                   :localities []
+                   :state nil
                    :bounds nil)))
 
 (re-frame/reg-event-fx
