@@ -77,12 +77,15 @@
   (let [species-info (re-frame/subscribe [::subs/current-species])
 
         species (-> @species-info :current-species :species)
+
+        ;; only available when accesing /localities/:locality-id/species/:species-id
         records (-> @species-info :current-species :records)
         locality (-> @species-info :current-locality :locality)
+
         other-localities (-> @species-info :current-species :other_localities)
         weekly-stats (-> @species-info :current-species :weekly_stats)
         media (-> @species-info :current-species-media)]
-    (if (and species locality)
+    (if species
       [:div.p2
        [:h2.bp3-heading  (:cname species)]
        [:p
@@ -135,27 +138,27 @@
           [:> bp/H3 "Loading"]
           [:span.bp3-ui-text "text"]])
 
-       [:> bp/Card {:className "my1"}
-        [:> bp/H3 "Observations"]
-        [:a {:href (routes/url-for :locality :locality_id (:id locality))}
-         (:lname locality)]
-        [:table.bp3-html-table.bp3-html-table-striped.bp3-html-table-bordered
-         [:thead
-          [:tr
-           [:td "Date"]
-           [:td "Amount"]
-           [:td "Observer ID"]]]
-         [:tbody
-          (map (fn [obs]
-                 [:tr {:key (:id obs)}
-                  [:td (first (cstring/split (:record_date obs) #"T"))]
-                  [:td [:b (:record_count obs)]]
-                  [:td (:observer_id obs)]])
-               records)]]]
+       (when (and (not-empty records) (some? locality))
+         [:> bp/Card {:className "my1"}
+          [:> bp/H3 "Observations"]
+          [:a {:href (routes/url-for :locality :locality_id (:id locality))}
+           (:lname locality)]
+          [:table.bp3-html-table.bp3-html-table-striped.bp3-html-table-bordered
+           [:thead
+            [:tr
+             [:td "Date"]
+             [:td "Amount"]
+             [:td "Observer ID"]]]
+           [:tbody
+            (map (fn [obs]
+                   [:tr {:key (:id obs)}
+                    [:td (first (cstring/split (:record_date obs) #"T"))]
+                    [:td [:b (:record_count obs)]]
+                    [:td (:observer_id obs)]])
+                 records)]]])
 
        [:> bp/Card {:className "my1"}
         [:> bp/H3 "Also Seen at"]
-        [:p.bp3-ui-text (str (:state_name locality) ", " (:country locality))]
         [:ul
          (map (fn [l]
            [:li {:key (:locality_id l)}
@@ -166,7 +169,6 @@
 
        [:> bp/Card {:className "my1"}
         [:> bp/H3 "Weekly Record Stats"]
-        [:p.bp3-ui-text (str (:state_name locality) ", " (:country locality))]
         [:div
          [chart-view weekly-stats]]]]
 
