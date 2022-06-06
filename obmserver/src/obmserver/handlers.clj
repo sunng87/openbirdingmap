@@ -46,13 +46,17 @@
 
 (defn get-species [req]
   (let [species-id (-> req :path-params :species_id)
+        ;; optional
         locality-id (-> req :params :locality_id)
+        state-code (-> req :params :state_code)
         ;; query
         species (db/find-species-by-id {:id species-id})
-        records (db/find-records-by-species-and-locality {:species_id species-id
-                                                          :locality_id locality-id})
+        records (when locality-id
+                  (db/find-records-by-species-and-locality {:species_id species-id
+                                                            :locality_id locality-id}))
 
-        current-state-code (:state_code (db/find-locality-by-id {:id locality-id}))
+        current-state-code (or state-code
+                               (:state_code (db/find-locality-by-id {:id locality-id})))
         other-localities-and-count (db/find-localities-records-by-species {:species_id species-id
                                                                            :state_code current-state-code})
         species-weekly-raw-stats (db/stat-species-records-by-week {:species_id species-id
