@@ -4,6 +4,8 @@ A website to view [ebird data](https://ebird.org).
 
 ![screenshot](https://github.com/sunng87/openbirdingmap/raw/main/screenshot.png)
 
+![screenshot](https://github.com/sunng87/openbirdingmap/raw/main/screenshot2.png)
+
 [My own instance](https://obm.sunng.info) serves data of Beijing(CN-11) and
 Jiangsu(CN-32).
 
