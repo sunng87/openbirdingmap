@@ -12,79 +12,81 @@
           lines (doall (rest lines))]
       lines)))
 
-;; ebird data csv
+;; ebird data csv: relNov-2022
 ;;
 ;; 00. GLOBAL UNIQUE IDENTIFIER (*)
 ;; 01. LAST EDITED DATE
 ;; 02. TAXONOMIC ORDER (*)
 ;; 03. CATEGORY
-;; 04. COMMON NAME (*)
-;; 05. SCIENTIFIC NAME (*)
-;; 06. SUBSPECIES COMMON NAME
-;; 07. SUBSPECIES SCIENTIFIC NAME
-;; 08. OBSERVATION COUNT (*)
-;; 09. BREEDING CODE
-;; 10. BREEDING CATEGORY
-;; 11. BEHAVIOR CODE
-;; 12. AGE/SEX
-;; 13. COUNTRY (*)
-;; 14. COUNTRY CODE (*)
-;; 15. STATE (*)
-;; 16. STATE CODE (*)
-;; 17. COUNTY
-;; 18. COUNTY CODE
-;; 19. IBA CODE
-;; 20. BCR CODE
-;; 21. USFWS CODE
-;; 22. ATLAS BLOCK
-;; 23. LOCALITY (*)
-;; 24. LOCALITY ID (*)
-;; 25. LOCALITY TYPE (*)
-;; 26. LATITUDE (*)
-;; 27. LONGITUDE (*)
-;; 28. OBSERVATION DATE (*)
-;; 29. TIME OBSERVATIONS STARTED
-;; 30. OBSERVER ID (*)
-;; 31. SAMPLING EVENT IDENTIFIER
-;; 32. PROTOCOL TYPE
-;; 33. PROTOCOL CODE
-;; 34. PROJECT CODE
-;; 35. DURATION MINUTES
-;; 36. EFFORT DISTANCE KM
-;; 37. EFFORT AREA HA
-;; 38. NUMBER OBSERVERS
-;; 39. ALL SPECIES REPORTED
-;; 40. GROUP IDENTIFIER
-;; 41. HAS MEDIA
-;; 42. APPROVED
-;; 43. REVIEWED
-;; 44. REASON
-;; 45. TRIP COMMENTS
-;; 46. SPECIES COMMENTS
+;; 04. TAXON CONCEPT ID
+;; 05. COMMON NAME (*)
+;; 06. SCIENTIFIC NAME (*)
+;; 07. SUBSPECIES COMMON NAME
+;; 08. SUBSPECIES SCIENTIFIC NAME
+;; 09. EXOTIC CODE
+;; 10. OBSERVATION COUNT (*)
+;; 11. BREEDING CODE
+;; 12. BREEDING CATEGORY
+;; 13. BEHAVIOR CODE
+;; 14. AGE/SEX
+;; 15. COUNTRY (*)
+;; 16. COUNTRY CODE (*)
+;; 17. STATE (*)
+;; 18. STATE CODE (*)
+;; 19. COUNTY
+;; 20. COUNTY CODE
+;; 21. IBA CODE
+;; 22. BCR CODE
+;; 23. USFWS CODE
+;; 24. ATLAS BLOCK
+;; 25. LOCALITY (*)
+;; 26. LOCALITY ID (*)
+;; 27. LOCALITY TYPE (*)
+;; 28. LATITUDE (*)
+;; 29. LONGITUDE (*)
+;; 30. OBSERVATION DATE (*)
+;; 31. TIME OBSERVATIONS STARTED
+;; 32. OBSERVER ID (*)
+;; 33. SAMPLING EVENT IDENTIFIER
+;; 34. PROTOCOL TYPE
+;; 35. PROTOCOL CODE
+;; 36. PROJECT CODE
+;; 37. DURATION MINUTES
+;; 38. EFFORT DISTANCE KM
+;; 39. EFFORT AREA HA
+;; 40. NUMBER OBSERVERS
+;; 41. ALL SPECIES REPORTED
+;; 42. GROUP IDENTIFIER
+;; 43. HAS MEDIA
+;; 44. APPROVED
+;; 45. REVIEWED
+;; 46. REASON
+;; 47. TRIP COMMENTS
+;; 48. SPECIES COMMENTS
 ;;
 
 (defn extract-ebird-item [line]
   {:record-id (nth line 0)
 
    :species-id (nth line 2)
-   :species-cname (nth line 4)
-   :species-sname (nth line 5)
+   :species-cname (nth line 5)
+   :species-sname (nth line 6)
 
-   :record-count (try (Integer/parseInt (nth line 8))
+   :record-count (try (Integer/parseInt (nth line 10))
                       (catch Exception _ nil))
 
-   :location-country (nth line 13)
-   :location-country-code (nth line 14)
-   :location-state (nth line 15)
-   :location-state-code (nth line 16)
-   :location-locality (nth line 23)
-   :location-locality-id (nth line 24)
-   :location-locality-type (nth line 25)
-   :location-lat (nth line 26)
-   :location-lon (nth line 27)
+   :location-country (nth line 15)
+   :location-country-code (nth line 16)
+   :location-state (nth line 17)
+   :location-state-code (nth line 18)
+   :location-locality (nth line 25)
+   :location-locality-id (nth line 26)
+   :location-locality-type (nth line 27)
+   :location-lat (nth line 28)
+   :location-lon (nth line 29)
 
-   :record-date (nth line 28)
-   :record-observer-id (nth line 30)})
+   :record-date (nth line 30)
+   :record-observer-id (nth line 32)})
 
 (defn datasource []
   (jdbc/get-datasource conf/db-spec))
@@ -94,7 +96,7 @@
   (into {} (map #(vector (nth % 0) (nth % 2)) ebd-taxonomy)))
 
 (def ebird-taxonomy-dict
-  (with-open [the-file (io/reader (io/resource "eBird_Taxonomy_v2021.csv"))]
+  (with-open [the-file (io/reader (io/resource "ebird_taxonomy_v2022.csv"))]
     (let [lines (csv/read-csv the-file :separator \,)
           lines (doall (rest lines))]
       (into-id-species-code-map lines))))
