@@ -12,12 +12,12 @@
 
   deploy:importer {:depends [build:importer]
                    :task (shell {:dir "obmimport"}
-                                (format "scp target/uberjar/obmimport-0.1.0-SNAPSHOT-standalone.jar %s:work/obm/" (remote-server-name)))}
+                                (format "scp target/default+uberjar/obmimport-0.1.0-SNAPSHOT-standalone.jar %s:work/obm/" (remote-server-name)))}
   deploy:server {:depends [build:server]
                  :task (do
                          (shell (format "ssh %s 'systemctl stop obmserver'" (remote-server-name)))
                          (shell {:dir "obmserver"}
-                                (format "scp target/uberjar/obmserver-0.1.0-SNAPSHOT-standalone.jar %s:/opt/obm/obmserver.jar" (remote-server-name)))
+                                (format "scp target/default+uberjar/obmserver-0.1.0-SNAPSHOT-standalone.jar %s:/opt/obm/obmserver.jar" (remote-server-name)))
                          (shell {:dir "obmserver"}
                                 (format "scp misc/obmserver.service %s:/usr/lib/systemd/system/obmserver.service" (remote-server-name)))
                          (shell (format "ssh %s 'systemctl daemon-reload'" (remote-server-name)))
