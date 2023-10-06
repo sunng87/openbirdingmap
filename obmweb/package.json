@@ -17,6 +17,6 @@
 		"chart.js": "3.7.1"
 	},
 	"devDependencies": {
-		"shadow-cljs": "2.15.2"
+		"shadow-cljs": "2.25.8"
 	}
 }
