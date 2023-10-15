@@ -18,7 +18,8 @@
 
  :dev-http
  {8280 {:root "resources/public"
-        :proxy-url "http://localhost:8080"}
+        :proxy-url "http://localhost:8080"
+        :use-index-files true}
   8290 "target/browser-test"}
 
  :builds
