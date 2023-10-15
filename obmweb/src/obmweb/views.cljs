@@ -19,8 +19,8 @@
   (let [state (re-frame/subscribe [::subs/state])]
     [:div.p2
      (if-let [l (-> @state :localities first)]
-       [:h2.bp3-heading (str (:state_name l) ", " (:country l))]
-       [:h2.bp3-heading.bp3-skeleton "not loaded"])
+       [:h2.bp5-heading (str (:state_name l) ", " (:country l))]
+       [:h2.bp5-heading.bp5-skeleton "not loaded"])
      [:> bp/Tabs {:id "state-tabs" :renderActiveTabPanelOnly true}
 
       [:> bp/Tab {:title "Localities"
@@ -33,7 +33,7 @@
                                [:li {:key (str "locality-" (:id l))}
                                 [:a {:href (routes/url-for :locality :locality_id (:id l))}
                                  (:lname l)]
-                                [:span.bp3-tag.bp3-round.bp3-minimal.ml1 (:species_count l) " species"]])]))}]
+                                [:span.bp5-tag.bp5-round.bp5-minimal.ml1 (:species_count l) " species"]])]))}]
       [:> bp/Tab {:title "Species"
                   :key "state-species-tab"
                   :id "state-species-tab"

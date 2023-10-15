@@ -29,9 +29,9 @@ footer {
     overflow: auto;
 }
 
-.bp3-transition-container {
-    z-index: 2002;
-}
+/* .bp3-transition-container { */
+/*     z-index: 2002; */
+/* } */
 
 @media screen and (max-width:1080px) {
     #main {
@@ -54,7 +54,7 @@ footer {
         z-index: 2001;
     }
 
-    div.bp3-navbar-group:last-of-type {
-        display: none;
-    }
+    /* div.bp3-navbar-group:last-of-type { */
+    /*     display: none; */
+    /* } */
 }

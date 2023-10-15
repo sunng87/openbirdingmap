@@ -16,18 +16,18 @@
     [:a {:href "https://github.com/sunng87/openbirdingmap" :target "_blank"} "github"]
     "."]
    [:h3.bp-heading "Data Version"]
-   [:ul.bp3-list
-    [:li "CN-11: Jan 2021 - Dec 2021"]
-    [:li "CN-32: Jan 2021 - Dec 2021"]]])
+   [:ul.bp5-list
+    [:li "CN-11: Jan 2021 - Dec 2022"]
+    [:li "CN-32: Jan 2021 - Dec 2022"]]])
 
 (defn footer-panel []
   [:footer.p2
-   [:p.bp3-ui-text
+   [:p.bp5-ui-text
     [:a {:href "https://obm.sunng.info/"} "OpenBirdingMap"]
     " - Data from "
     [:a {:href "https://ebird.org" :target "_blank"} "eBird"]
     "."]
-   [:p.bp3-ui-text
+   [:p.bp5-ui-text
     "Created with 💓, Clojure and ClojureScript. "
     [:a {:href "https://github.com/sunng87/openbirdingmap" :target "_blank"}
      [:> bp/Icon {:icon "git-repo"}]]]])
