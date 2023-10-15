@@ -74,7 +74,7 @@
     [:header
      [:> bp/Navbar {:className "bp5-dark"}
       [:> bp/NavbarGroup
-       [:> bp/NavbarHeading "OpenBirdingMap"]
+       [:> bp/NavbarHeading [:b "OpenBirdingMap"]]
        [:> bp/NavbarDivider]
        (state-select state)]
       [:> bp/NavbarGroup {:align "right"}
