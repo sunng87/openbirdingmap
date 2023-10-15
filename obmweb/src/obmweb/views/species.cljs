@@ -3,6 +3,7 @@
             [reagent.core :as r]
             ["chart.js" :as chart]
             ["@blueprintjs/core" :as bp]
+            ["react-chartjs-2" :as chartcomps]
             [goog.string :as gstring]
             [goog.string.format]
             [clojure.string :as cstring]
@@ -13,6 +14,15 @@
 (def ^:const icon-play "play")
 (def ^:const icon-pause "pause")
 (def ^:const icon-disable "disable")
+
+;; register scales
+(.register chart/Chart
+           chart/CategoryScale
+           chart/LinearScale
+           chart/Title
+           chart/BarElement
+           chart/Tooltip
+           chart/Legend)
 
 (defn- audio-and-sono-view [audio]
   (let [sono-toggle (r/atom false)
@@ -56,22 +66,12 @@
         days-since (Math/floor (/ (- today start-of-year) (* 24 60 60 1000)))]
     (Math/ceil (/ days-since 7))))
 
-(defn- render-chart [weekly-stats]
-  (let [context (.getContext (.getElementById js/document "chart-view-canvas") "2d")
-        bg-color (update (into [] (repeat 53 "#D3D8DE")) (current-week) (constantly "#738091"))
-        chart-data {:type "bar"
-                    :data {:labels (mapv #(str "W" %) (range 0 54))
-                           :datasets [{:data weekly-stats
-                                       :label "Weekly record stats"
-                                       :backgroundColor bg-color}]}}]
-      (js/Chart. context (clj->js chart-data))))
-
 (defn- chart-view [weekly-stats]
-  (r/create-class
-   {:component-did-mount #(render-chart weekly-stats)
-    :display-name "weekly-stats-chart-view"
-    :reagent-render (fn []
-                      [:canvas {:id "chart-view-canvas" :height "100px"}])}))
+  (let [bg-color (update (into [] (repeat 53 "#D3D8DE")) (current-week) (constantly "#738091"))]
+    [:> chartcomps/Bar {:data {:labels (mapv #(str "W" %) (range 0 54))
+                            :datasets [{:data weekly-stats
+                                        :label "Weekly record stats"
+                                        :backgroundColor bg-color}]}}]))
 
 (defn species-panel []
   (let [species-info (re-frame/subscribe [::subs/current-species])

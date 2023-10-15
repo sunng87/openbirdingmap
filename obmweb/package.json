@@ -9,12 +9,13 @@
 	"dependencies": {
 		"@blueprintjs/core": "^5.4.0",
 		"@blueprintjs/select": "^5.0.14",
+		"chart.js": "4.4.0",
 		"highlight.js": "11.1.0",
 		"leaflet": "1.9.4",
 		"react": "17.0.2",
+		"react-chartjs-2": "^5.2.0",
 		"react-dom": "17.0.2",
-		"react-leaflet": "^3.2",
-		"chart.js": "4.4.0"
+		"react-leaflet": "^3.2"
 	},
 	"overrides": {
 		"change-case": "5.0.2"
