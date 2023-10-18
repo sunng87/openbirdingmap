@@ -44,8 +44,7 @@
       :zoomControl false}
 
      [:> leaflet/TileLayer
-      {:attribution "Map data &copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
-       :url "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}]
+      {:url "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}]
 
      [:> leaflet/AttributionControl
       {:position "bottomright"}]

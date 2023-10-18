@@ -109,10 +109,10 @@
                                    (:cname species))}
          "xeno-canto.org"]]
 
-       (if-let [images (not-empty (:images media))]
-         [:> bp/Card {:className "my1"}
-          [:> bp/H3 "Image"]
-
+       [:> bp/Section {:title "Images"
+                       :collapsible true}
+        (if-let [images (not-empty (:images media))]
+         [:> bp/SectionCard
           [:> bp/Tabs {:id "image-tabs" :renderActiveTabPanelOnly true}
            (doall
             (for [image (map-indexed #(assoc %2 :idx %1) images)]
@@ -122,55 +122,55 @@
                           :panel (r/as-element [:<>
                                                 [:img.fit {:src (:src image) :alt (:alt image)}]
                                                 [:p.bp5-ui-text (:alt image)]])}]))]]
+         [:> bp/SectionCard {:className "bp5-skeleton"}])]
 
-         [:> bp/Card {:className "bp5-skeleton"}
-          [:> bp/H3 "Loading"]
-          [:span.bp5-ui-text "text"]])
 
-       (if-let [audios (not-empty (:recordings media))]
-         [:> bp/Card {:className "my1"}
-          [:> bp/H3 "Sounds"]
+       [:> bp/Section {:title "Sounds"
+                       :collapsible true}
+        (if-let [audios (not-empty (:recordings media))]
           (doall
            (for [audio audios]
-             [:div.mb2 {:key (:id audio)}
-              [audio-and-sono-view audio]]))]
-         [:> bp/Card {:className "bp5-skeleton"}
-          [:> bp/H3 "Loading"]
-          [:span.bp5-ui-text "text"]])
+             [:> bp/SectionCard {:key (:id audio)}
+              [audio-and-sono-view audio]]))
+          [:> bp/SectionCard {:className "bp5-skeleton"}])]
+
 
        (when (and (not-empty records) (some? locality))
-         [:> bp/Card {:className "my1"}
-          [:> bp/H3 "Observations"]
-          [:a {:href (routes/url-for :locality :locality_id (:id locality))}
-           (:lname locality)]
-          [:table.bp5-html-table.bp5-html-table-striped.bp5-html-table-bordered
-           [:thead
-            [:tr
-             [:td "Date"]
-             [:td "Amount"]
-             [:td "Observer ID"]]]
-           [:tbody
-            (map (fn [obs]
-                   [:tr {:key (:id obs)}
-                    [:td (first (cstring/split (:record_date obs) #"T"))]
-                    [:td [:b (:record_count obs)]]
-                    [:td (:observer_id obs)]])
-                 records)]]])
+         [:> bp/Section {:title "Observations"
+                         :collapsible true}
+          [:> bp/SectionCard
+           [:a {:href (routes/url-for :locality :locality_id (:id locality))}
+            (:lname locality)]
+           [:table.bp5-html-table.bp5-html-table-striped.bp5-html-table-bordered
+            [:thead
+             [:tr
+              [:td "Date"]
+              [:td "Amount"]
+              [:td "Observer ID"]]]
+            [:tbody
+             (map (fn [obs]
+                    [:tr {:key (:id obs)}
+                     [:td (first (cstring/split (:record_date obs) #"T"))]
+                     [:td [:b (:record_count obs)]]
+                     [:td (:observer_id obs)]])
+                  records)]]]])
 
-       [:> bp/Card {:className "my1"}
-        [:> bp/H3 "Also Seen at"]
-        [:ul
-         (map (fn [l]
-           [:li {:key (:locality_id l)}
-            [:a {:href (routes/url-for :species :locality_id (:locality_id l) :species_id (:id species))}
-             (:lname l)]
-            [:span.bp5-tag.bp5-round.bp5-minimal.ml1 (:c l) " times"]])
-              other-localities)]]
+       [:> bp/Section {:title "Also Seen at"
+                       :collapsible true}
+        [:> bp/SectionCard
+         [:ul
+          (map (fn [l]
+                 [:li {:key (:locality_id l)}
+                  [:a {:href (routes/url-for :species :locality_id (:locality_id l) :species_id (:id species))}
+                   (:lname l)]
+                  [:span.bp5-tag.bp5-round.bp5-minimal.ml1 (:c l) " times"]])
+               other-localities)]]]
 
-       [:> bp/Card {:className "my1"}
-        [:> bp/H3 "Weekly Record Stats"]
-        [:div
-         [chart-view weekly-stats]]]]
+       [:> bp/Section {:title "Weekly Record Stats"
+                       :collapsible true}
+        [:> bp/SectionCard
+         [:div
+          [chart-view weekly-stats]]]]]
 
       ;; loading
       [:div.p2
