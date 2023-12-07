@@ -7,9 +7,9 @@
 		"build-report": "npx shadow-cljs run shadow.cljs.build-report app target/build-report.html"
 	},
 	"dependencies": {
-		"@blueprintjs/core": "^5.4.0",
-		"@blueprintjs/select": "^5.0.14",
-		"chart.js": "4.4.0",
+		"@blueprintjs/core": "^5.7.0",
+		"@blueprintjs/select": "^5.0.18",
+		"chart.js": "4.4.1",
 		"highlight.js": "11.1.0",
 		"leaflet": "1.9.4",
 		"react": "17.0.2",
