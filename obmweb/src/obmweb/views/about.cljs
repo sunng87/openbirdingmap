@@ -17,8 +17,8 @@
     "."]
    [:h3.bp-heading "Data Version"]
    [:ul.bp5-list
-    [:li "CN-11: Jan 2021 - Dec 2022"]
-    [:li "CN-32: Jan 2021 - Dec 2022"]]])
+    [:li "CN-11: Jan 2021 - Dec 2023"]
+    [:li "CN-32: Jan 2021 - Dec 2023"]]])
 
 (defn footer-panel []
   [:footer.p2
