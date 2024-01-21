@@ -10,6 +10,8 @@ WorkingDirectory=/opt/obm
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=obmserver
+Restart=on-failure
+RestartSec=5s
 
 [Install]
 WantedBy=multi-user.target
