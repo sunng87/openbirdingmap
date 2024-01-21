@@ -12,7 +12,7 @@
           lines (doall (rest lines))]
       lines)))
 
-;; ebird data csv: relNov-2022
+;; ebird data csv: relDec-2023
 ;;
 ;; 00. GLOBAL UNIQUE IDENTIFIER (*)
 ;; 01. LAST EDITED DATE
@@ -96,7 +96,7 @@
   (into {} (map #(vector (nth % 0) (nth % 2)) ebd-taxonomy)))
 
 (def ebird-taxonomy-dict
-  (with-open [the-file (io/reader (io/resource "ebird_taxonomy_v2022.csv"))]
+  (with-open [the-file (io/reader (io/resource "ebird_taxonomy_v2023.csv"))]
     (let [lines (csv/read-csv the-file :separator \,)
           lines (doall (rest lines))]
       (into-id-species-code-map lines))))
