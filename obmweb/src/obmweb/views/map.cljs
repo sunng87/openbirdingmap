@@ -35,17 +35,13 @@
            [(first bounds) (first bounds)]
            bounds)))
 
-(defn- transform-lat-lon [[lat lon]] [lon lat])
-
 (defn centerToLocalities
   [{bounds :bounds}]
   (let [map (.-current (mapgl/useMap))]
     (when (not-empty bounds)
       (if (> (count bounds) 1)
         (.fitBounds map (clj->js (get-bounding-box bounds)))
-        (.flyTo map
-                {:center (clj->js (transform-lat-lon (first bounds))),
-                 :zoom 15})))
+        (.flyTo map (clj->js {:center (first bounds), :zoom 15}))))
     nil))
 
 (defn popup
