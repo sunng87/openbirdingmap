@@ -14,12 +14,16 @@
                   {:latitude (:lat l),
                    :longitude (:lon l),
                    :anchor "bottom",
-                   :key (:id l)}
-                  [:img {:src "/images/bird.svg", :weight 16, :height 16}]
-                  #_[:> leaflet/Popup {:key (:id l)}
-                     [:a {:href (routes/url-for :locality :locality_id (:id l))}
-                      [:> bp/Icon {:icon "map-marker", :className "mr1"}]
-                      (:lname l)]]])
+                   :key (:id l),
+                   :on-click (fn [e]
+                               (.stopPropagation (.-originalEvent e))
+                               (re-frame/dispatch [::events/map-set-popup-info
+                                                   l]))}
+                  [:img
+                   {:src "/images/bird.svg",
+                    :weight 16,
+                    :height 16,
+                    :style {:cursor "pointer"}}]])
       localities)))
 
 (defn- get-bounding-box
@@ -31,15 +35,31 @@
            [(first bounds) (first bounds)]
            bounds)))
 
+(defn- transform-lat-lon [[lat lon]] [lon lat])
+
 (defn centerToLocalities
   [{bounds :bounds}]
   (let [map (.-current (mapgl/useMap))]
-    (.log js/console (clj->js (get-bounding-box bounds)))
     (when (not-empty bounds)
       (if (> (count bounds) 1)
         (.fitBounds map (clj->js (get-bounding-box bounds)))
-        (.flyTo map {:center (clj->js (first bounds)), :zoom 15})))
+        (.flyTo map
+                {:center (clj->js (transform-lat-lon (first bounds))),
+                 :zoom 15})))
     nil))
+
+(defn popup
+  []
+  (let [popup-info @(re-frame/subscribe [::subs/map-popup-info])]
+    (when popup-info
+      [:> mapgl/Popup
+       {:anchor "top",
+        :longitude (js/Number (:lon popup-info)),
+        :latitude (js/Number (:lat popup-info)),
+        :on-close #(re-frame/dispatch [::events/map-close-popup])}
+       [:div
+        [:a {:href (routes/url-for :locality :locality_id (:id popup-info))}
+         (:lname popup-info)]]])))
 
 (defn map-view
   []
@@ -49,5 +69,5 @@
       :mapStyle "https://tiles.openfreemap.org/styles/positron"}
      [:> mapgl/AttributionControl {:position "bottom-right"}]
      [:> mapgl/NavigationControl {:position "top-right"}]
-     (localityMarkers (:localities map-data))
+     (localityMarkers (:localities map-data)) [popup]
      [:f> centerToLocalities {:bounds (:bounds map-data)}]]))

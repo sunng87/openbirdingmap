@@ -175,3 +175,9 @@
                                   (assoc db
                                     :current-species-media (-> response
                                                                :results))))
+
+(re-frame/reg-event-db ::map-set-popup-info
+                       (fn [db [_ info]] (assoc db :popup-info info)))
+
+
+(re-frame/reg-event-db ::map-close-popup (fn [db _] (assoc db :popup-info nil)))
