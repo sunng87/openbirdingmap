@@ -1,56 +1,53 @@
-(ns  obmweb.views.map
-  (:require
-   [re-frame.core :as re-frame]
-   [obmweb.events :as events]
-   [obmweb.routes :as routes]
-   [obmweb.subs :as subs]
-   ["react-leaflet" :as leaflet]
-   ["@blueprintjs/core" :as bp]
-   ["leaflet" :as ll]))
+(ns obmweb.views.map
+  (:require [re-frame.core :as re-frame]
+            [obmweb.events :as events]
+            [obmweb.routes :as routes]
+            [obmweb.subs :as subs]
+            ["@blueprintjs/core" :as bp]
+            ["react-map-gl/maplibre" :as mapgl]
+            ["maplibre-gl" :as maplibre-gl]))
 
-(defn mapLocation []
-  (let [map (leaflet/useMap)
-        _ (leaflet/useMapEvent "locationfound" (fn [e] (.flyTo map (.-latlng e) (.getZoom map))))]
-    (.locate map)
-    nil))
-
-(defn localityMarkers [localities]
+(defn localityMarkers
+  [localities]
   (when (not-empty localities)
-    (map (fn [l]
-            [:> leaflet/Marker
-             {:position [(:lat l) (:lon l)]
-              :icon (ll/Icon. #js{"iconUrl" "/images/bird.svg"
-                                  "iconSize" (ll/Point. 32 32)})
-              :key (:id l)}
-             [:> leaflet/Popup {:key (:id l)}
-              [:a {:href (routes/url-for :locality :locality_id (:id l))}
-               [:> bp/Icon {:icon "map-marker" :className "mr1"}] (:lname l)]]])
-         localities)))
+    (map (fn [l] [:> mapgl/Marker
+                  {:latitude (:lat l),
+                   :longitude (:lon l),
+                   :anchor "bottom",
+                   :key (:id l)}
+                  [:img {:src "/images/bird.svg", :weight 16, :height 16}]
+                  #_[:> leaflet/Popup {:key (:id l)}
+                     [:a {:href (routes/url-for :locality :locality_id (:id l))}
+                      [:> bp/Icon {:icon "map-marker", :className "mr1"}]
+                      (:lname l)]]])
+      localities)))
 
-(defn centerToLocalities [{bounds :bounds}]
-  (let [map (leaflet/useMap)]
+(defn- get-bounding-box
+  [bounds]
+  (doall (reduce (fn [[[sw-lon sw-lat] [ne-lon ne-lat]] [lon lat]]
+                   ;; return in lnglat format
+                   [[(min sw-lon lon) (min sw-lat lat)]
+                    [(max ne-lon lon) (max ne-lat lat)]])
+           [(first bounds) (first bounds)]
+           bounds)))
+
+(defn centerToLocalities
+  [{bounds :bounds}]
+  (let [map (.-current (mapgl/useMap))]
+    (.log js/console (clj->js (get-bounding-box bounds)))
     (when (not-empty bounds)
       (if (> (count bounds) 1)
-        (.flyToBounds map (ll/LatLngBounds. (clj->js bounds)))
-        (.flyTo map (ll/latLng. (clj->js (first bounds))) 15)))
+        (.fitBounds map (clj->js (get-bounding-box bounds)))
+        (.flyTo map {:center (clj->js (first bounds)), :zoom 15})))
     nil))
 
-(defn map-view []
+(defn map-view
+  []
   (let [map-data @(re-frame/subscribe [::subs/map])]
-    [:> leaflet/MapContainer
-     {:center [0 0]
-      :zoom 2
-      :attributionControl false
-      :zoomControl false}
-
-     [:> leaflet/TileLayer
-      {:url "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}]
-
-     [:> leaflet/AttributionControl
-      {:position "bottomright"}]
-     [:> leaflet/ZoomControl
-      {:position "topright"}]
-
+    [:> mapgl/Map
+     {:initialViewState {:latitude 0, :longitude 0, :zoom 2},
+      :mapStyle "https://tiles.openfreemap.org/styles/positron"}
+     [:> mapgl/AttributionControl {:position "bottom-right"}]
+     [:> mapgl/NavigationControl {:position "top-right"}]
      (localityMarkers (:localities map-data))
-     [:f> centerToLocalities {:bounds (:bounds map-data)}]
-     ]))
+     [:f> centerToLocalities {:bounds (:bounds map-data)}]]))
