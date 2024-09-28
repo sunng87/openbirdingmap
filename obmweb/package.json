@@ -7,20 +7,20 @@
 		"build-report": "npx shadow-cljs run shadow.cljs.build-report app target/build-report.html"
 	},
 	"dependencies": {
-		"@blueprintjs/core": "^5.7.0",
-		"@blueprintjs/select": "^5.0.18",
-		"chart.js": "4.4.1",
+		"@blueprintjs/core": "^5.13.0",
+		"@blueprintjs/select": "^5.2.4",
+		"chart.js": "4.4.4",
 		"highlight.js": "11.1.0",
 		"leaflet": "1.9.4",
-		"react": "17.0.2",
+		"react": "18.3.1",
 		"react-chartjs-2": "^5.2.0",
-		"react-dom": "17.0.2",
-		"react-leaflet": "^3.2"
+		"react-dom": "18.3.1",
+		"react-leaflet": "^4.2.1"
 	},
 	"overrides": {
 		"change-case": "5.0.2"
 	},
 	"devDependencies": {
-		"shadow-cljs": "2.25.8"
+		"shadow-cljs": "2.28.15"
 	}
 }
