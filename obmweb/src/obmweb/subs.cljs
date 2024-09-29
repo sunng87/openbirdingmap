@@ -12,7 +12,8 @@
                     {:bounds (:bounds db),
                      :localities (-> db
                                      :state
-                                     :localities)}))
+                                     :localities)
+                     :current-locality (:locality (:current-locality db))}))
 
 (re-frame/reg-sub ::map-popup-info (fn [db] (:popup-info db)))
 

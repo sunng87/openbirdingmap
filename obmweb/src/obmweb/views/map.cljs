@@ -21,8 +21,8 @@
                                                    l]))}
                   [:img
                    {:src "/images/bird.svg",
-                    :weight 16,
-                    :height 16,
+                    :weight 24,
+                    :height 24,
                     :style {:cursor "pointer"}}]])
          localities)))
 
@@ -36,12 +36,14 @@
                  bounds)))
 
 (defn centerToLocalities
-  [{bounds :bounds}]
+  [{bounds :bounds current :current}]
   (let [map (.-current (mapgl/useMap))]
     (when (not-empty bounds)
       (if (> (count bounds) 1)
         (.fitBounds map (clj->js (get-bounding-box bounds)))
-        (.flyTo map (clj->js {:center (first bounds), :zoom 15}))))
+        (do
+          (.flyTo map (clj->js {:center (first bounds), :zoom 15}))
+          (re-frame/dispatch [::events/map-set-popup-info current]))))
     nil))
 
 (defn popup
@@ -67,4 +69,5 @@
      [:> mapgl/NavigationControl {:position "top-right"}]
      (localityMarkers (:localities map-data))
      [popup]
-     [:f> centerToLocalities {:bounds (:bounds map-data)}]]))
+     [:f> centerToLocalities {:bounds (:bounds map-data)
+                              :current (:current-locality map-data)}]]))
