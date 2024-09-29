@@ -24,7 +24,7 @@
                     :weight 16,
                     :height 16,
                     :style {:cursor "pointer"}}]])
-      localities)))
+         localities)))
 
 (defn- get-bounding-box
   [bounds]
@@ -32,8 +32,8 @@
                    ;; return in lnglat format
                    [[(min sw-lon lon) (min sw-lat lat)]
                     [(max ne-lon lon) (max ne-lat lat)]])
-           [(first bounds) (first bounds)]
-           bounds)))
+                 [(first bounds) (first bounds)]
+                 bounds)))
 
 (defn centerToLocalities
   [{bounds :bounds}]
@@ -65,5 +65,6 @@
       :mapStyle "https://tiles.openfreemap.org/styles/positron"}
      [:> mapgl/AttributionControl {:position "bottom-right"}]
      [:> mapgl/NavigationControl {:position "top-right"}]
-     (localityMarkers (:localities map-data)) [popup]
+     (localityMarkers (:localities map-data))
+     [popup]
      [:f> centerToLocalities {:bounds (:bounds map-data)}]]))
