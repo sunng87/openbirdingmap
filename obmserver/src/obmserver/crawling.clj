@@ -3,8 +3,8 @@
             [clj-http.client :as http])
   (:import [org.jsoup Jsoup]))
 
-(defn to-ebird-url [species-id]
-  (format "https://ebird.org/species/%s" species-id))
+(defn to-bow-url [species-id]
+  (format "https://birdsoftheworld.org/bow/species/%s/cur/introduction" species-id))
 
 (defn fetch-html [url]
   (let [r (http/get url {:socket-timeout 5000
@@ -20,12 +20,11 @@
 
 (defn parse-body-images [html]
   (let [soup (Jsoup/parse ^String html)
-        images (.select soup "div.MediaFeed:first-of-type div.MediaThumbnail img")
-        labels (.select soup "div.MediaFeed:first-of-type h3.MediaFeedItem-title")]
-    (mapv #(hash-map :src (.attr %1 "src") :alt (.attr %1 "alt") :title (.text %2)) images labels)))
+        items (.select soup "a[data-media-type=photo]")]
+    (mapv #(hash-map :src (.attr % "data-asset-src") :title (.attr % "data-asset-title")) items)))
 
 (defn images [species-id]
-  (-> (to-ebird-url species-id)
+  (-> (to-bow-url species-id)
       fetch-html
       parse-body-images))
 
