@@ -45,7 +45,7 @@
         [:div
          [:> bp/H4 (:type audio)]
          [:p.bp5-running-text
-          [:span.mr2 [:> bp/Icon {:icon "record"} :className "mr1"] (:rec audio)]
+          [:span.mr2 [:> bp/Icon {:icon "user" :className "mr1"}] (:rec audio)]
           [:span.mr2 [:> bp/Icon {:icon "calendar" :className "mr1"}] (:date audio)]
           [:span.mr2 [:> bp/Icon {:icon "time" :className "mr1"}] (:length audio)]
           [:br]
@@ -109,7 +109,7 @@
                                    (:cname species))}
          "xeno-canto.org"]]
 
-       [:> bp/Section {:title "Images"
+       [:> bp/Section {:title "Photos"
                        :collapsible true}
         (if-let [images (not-empty (:images media))]
          [:> bp/SectionCard
@@ -121,9 +121,12 @@
                           :id (str "image-tab-" (:idx image))
                           :panel (r/as-element [:<>
                                                 [:img.fit {:src (:src image) :alt (:alt image)}]
-                                                [:p.bp5-ui-text (str "© " (:author image) ", "
-                                                                     (:state image) ", " (:country image)
-                                                                     " | " )
+                                                [:p.bp5-ui-text
+                                                 "© "
+                                                 [:b (:author image)]
+                                                 " "
+                                                 (:state image) ", " (:country image)
+                                                 " | "
                                                  [:a {:target "_blank" :href (:link image)}
                                                   (:citation image)]]
                                                 ])}]))]]
