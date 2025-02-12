@@ -21,7 +21,14 @@
 (defn parse-body-images [html]
   (let [soup (Jsoup/parse ^String html)
         items (.select soup "a[data-media-type=photo]")]
-    (mapv #(hash-map :src (.attr % "data-asset-src") :title (.attr % "data-asset-title")) items)))
+    (mapv #(hash-map :src (.attr % "data-asset-src")
+                     :title (.attr % "data-asset-title")
+                     :author (.attr % "data-asset-username")
+                     :citation (.attr % "data-asset-citationname")
+                     :state (.attr % "data-asset-stateprov")
+                     :country (.attr % "data-asset-country")
+                     :link (.attr % "data-asset-mllink"))
+          items)))
 
 (defn images [species-id]
   (-> (to-bow-url species-id)
