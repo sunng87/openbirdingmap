@@ -121,7 +121,12 @@
                           :id (str "image-tab-" (:idx image))
                           :panel (r/as-element [:<>
                                                 [:img.fit {:src (:src image) :alt (:alt image)}]
-                                                [:p.bp5-ui-text (:alt image)]])}]))]]
+                                                [:p.bp5-ui-text (str "© " (:author image) ", "
+                                                                     (:state image) ", " (:country image)
+                                                                     " | " )
+                                                 [:a {:target "_blank" :href (:link image)}
+                                                  (:citation image)]]
+                                                ])}]))]]
          [:> bp/SectionCard {:className "bp5-skeleton"}])]
 
 
