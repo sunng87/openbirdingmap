@@ -65,7 +65,6 @@
     [:> mapgl/Map
      {:initialViewState {:latitude 0, :longitude 0, :zoom 2},
       :mapStyle "https://tiles.openfreemap.org/styles/positron"}
-     [:> mapgl/AttributionControl {:position "bottom-right"}]
      [:> mapgl/NavigationControl {:position "top-right"}]
      (localityMarkers (:localities map-data))
      [popup]
