@@ -3,28 +3,12 @@
             [mount.core :refer [defstate]]
             [stavka.core :refer [$$ $$l]]))
 
-(defn mariadb-db-host []
-  ($$ :obm.db.host "localhost"))
-
-(defn mariadb-db-port []
-  ($$l :obm.db.port 3306))
-
-(defn mariadb-db-name []
-  ($$ :obm.db.name "obm"))
-
-(defn mariadb-db-username []
-  ($$ :obm.db.username "obm_user"))
-
-(defn mariadb-db-password []
-  ($$ :obm.db.password "obm_pass"))
+(defn db-file []
+  ($$ :obm.db.file "obm.db"))
 
 (defn pool-spec []
-  {:jdbc-url (format "jdbc:mariadb://%s:%s/%s?user=%s&password=%s"
-                     (mariadb-db-host)
-                     (mariadb-db-port)
-                     (mariadb-db-name)
-                     (mariadb-db-username)
-                     (mariadb-db-password))})
+  {:jdbc-url (format "jdbc:sqlite:%s"
+                     (db-file))})
 
 (defstate ^:dynamic *db*
   :start (conman/connect! (pool-spec))
