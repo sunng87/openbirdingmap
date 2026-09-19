@@ -33,6 +33,46 @@ footer {
 /*     z-index: 2002; */
 /* } */
 
+/* photo carousel */
+.photo-frame {
+  width: 100%;
+}
+
+.photo-frame img.fit {
+  display: block; /* remove inline-img baseline gap so the label bar attaches */
+}
+
+.photo-skeleton {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+}
+
+.photo-label-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 4px 8px;
+  background-color: #ebf1f5;
+  color: #404854;
+  font-size: 12px;
+}
+
+.photo-label-title {
+  text-align: center;
+  color: #1c2127;
+}
+
+.photo-label-attr a {
+  color: #2d72d2;
+}
+
+.photo-label-counter {
+  flex-shrink: 0;
+  color: #5f6b7c;
+}
+
 @media screen and (max-width: 1080px) {
   #main {
     display: static;

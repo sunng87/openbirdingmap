@@ -60,6 +60,52 @@
         [:div.overflow-auto.mt1
          [:img.pr1.pl1 {:src (-> audio :sono :full) :alt "sono"}]]]])))
 
+(defn- image-carousel [images]
+  (let [idx (r/atom 0)
+        ;; the src that has finished loading; any other image shows a skeleton
+        loaded-src (r/atom nil)]
+    (fn [images]
+      (let [n (count images)
+            i (-> @idx (min (dec n)) (max 0))
+            image (nth images i nil)]
+        (when image
+          (let [loaded? (= @loaded-src (:src image))]
+            [:div
+             [:div.flex.items-center
+              [:> bp/Button {:icon "chevron-left"
+                             :variant "minimal"
+                             :size "large"
+                             :disabled (zero? i)
+                             :aria-label "Previous photo"
+                             :on-click #(swap! idx dec)}]
+              [:div.flex-auto
+               [:div.photo-frame
+                (when-not loaded?
+                  [:div.bp6-skeleton.photo-skeleton])
+                [:img.fit {:src (:src image)
+                           :alt (:alt image)
+                           :style (when-not loaded? {:display "none"})
+                           :on-load #(reset! loaded-src (:src image))}]
+                [:div.photo-label-bar
+                 [:div
+                  (when (not-empty (:title image))
+                    [:div.photo-label-title (:title image)])
+                  [:div.photo-label-attr
+                   "© "
+                   [:b (:author image)]
+                   " "
+                   (:state image) ", " (:country image)
+                   " | "
+                   [:a {:target "_blank" :href (:link image)}
+                    (:citation image)]]]
+                 [:span.photo-label-counter (str (inc i) " / " n)]]]]
+              [:> bp/Button {:icon "chevron-right"
+                             :variant "minimal"
+                             :size "large"
+                             :disabled (= i (dec n))
+                             :aria-label "Next photo"
+                             :on-click #(swap! idx inc)}]]]))))))
+
 (defn- current-week []
   (let [today (js/Date.)
         start-of-year (js/Date. (.getFullYear today) 0 1)
@@ -123,23 +169,7 @@
           :else
           (let [images (:images media)]
             [:> bp/SectionCard
-             [:> bp/Tabs {:id "image-tabs" :renderActiveTabPanelOnly true}
-              (doall
-               (for [image (map-indexed #(assoc %2 :idx %1) images)]
-                 [:> bp/Tab {:title (or (not-empty (:title image)) (:idx image))
-                             :key (:idx image)
-                             :id (str "image-tab-" (:idx image))
-                             :panel (r/as-element [:<>
-                                                   [:img.fit {:src (:src image) :alt (:alt image)}]
-                                                   [:p.bp6-ui-text
-                                                    "© "
-                                                    [:b (:author image)]
-                                                    " "
-                                                    (:state image) ", " (:country image)
-                                                    " | "
-                                                    [:a {:target "_blank" :href (:link image)}
-                                                     (:citation image)]]
-                                                   ])}]))]]))]
+             [image-carousel images]]))]
 
 
        [:> bp/Section {:title "Sounds"
