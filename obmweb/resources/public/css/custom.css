@@ -54,7 +54,7 @@ footer {
     z-index: 2001;
   }
 
-  div.bp5-navbar-group:last-of-type {
+  div.bp6-navbar-group:last-of-type {
     display: none;
   }
 }

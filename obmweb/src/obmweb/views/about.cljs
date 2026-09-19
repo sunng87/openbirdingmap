@@ -30,21 +30,21 @@
       "."]
      [:h3.bp-heading "Data Version"]
      (if @metadata
-       [:ul.bp5-list
+       [:ul.bp6-list
         (for [m @metadata]
           [:li {:key (:id m)}
            (str (:id m) ": " (format-month-year (:date_start m)) " - " (format-month-year (:date_end m)))])]
-       [:ul.bp5-list
-        [:li.bp5-skeleton "loading"]])]))
+       [:ul.bp6-list
+        [:li.bp6-skeleton "loading"]])]))
 
 (defn footer-panel []
   [:footer.p2
-   [:p.bp5-ui-text
+   [:p.bp6-ui-text
     [:a {:href "https://obm.sunng.info/"} "OpenBirdingMap"]
     " - Data from "
     [:a {:href "https://ebird.org" :target "_blank"} "eBird"]
     "."]
-   [:p.bp5-ui-text
+   [:p.bp6-ui-text
     "Created with 💓, Clojure and ClojureScript. "
     [:a {:href "https://github.com/sunng87/openbirdingmap" :target "_blank"}
      [:> bp/Icon {:icon "git-repo"}]]]])

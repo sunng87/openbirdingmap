@@ -66,14 +66,14 @@
                               (reagent/as-element [:> bp/Breadcrumb {:href (.-href item)
                                                                      :text (.-text item)
                                                                      :current (.-current item)}]))]
-          [:div.p2.bp5-text-small
+          [:div.p2.bp6-text-small
            [:> bp/Breadcrumbs {:items items
                                :breadcrumbRenderer item-renderer}]])))))
 
 (defn navbar []
   (let [state (re-frame/subscribe [::subs/current-state])]
     [:header
-     [:> bp/Navbar {:className "bp5-dark"}
+     [:> bp/Navbar {:className "bp6-dark"}
       [:> bp/NavbarGroup
        [:> bp/NavbarHeading [:b "OpenBirdingMap"]]
        [:> bp/NavbarDivider]

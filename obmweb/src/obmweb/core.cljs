@@ -1,6 +1,6 @@
 (ns obmweb.core
   (:require
-   [reagent.dom :as rdom]
+   [reagent.dom.client :as rdom-client]
    [re-frame.core :as re-frame]
    [obmweb.events :as events]
    [obmweb.routes :as routes]
@@ -14,11 +14,13 @@
   (when config/debug?
     (println "dev mode")))
 
+;; react 19: mount via createRoot (ReactDOM.render was removed)
+(defonce react-root
+  (rdom-client/create-root (.getElementById js/document "app")))
+
 (defn ^:dev/after-load mount-root []
   (re-frame/clear-subscription-cache!)
-  (let [root-el (.getElementById js/document "app")]
-    (rdom/unmount-component-at-node root-el)
-    (rdom/render [views/main-panel] root-el)))
+  (rdom-client/render react-root [views/main-panel]))
 
 (defn init []
   (routes/start!)

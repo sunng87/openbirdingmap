@@ -44,7 +44,7 @@
                                               (.pause @player))}]]
         [:div
          [:> bp/H4 (:type audio)]
-         [:p.bp5-running-text
+         [:p.bp6-running-text
           [:span.mr2 [:> bp/Icon {:icon "user" :className "mr1"}] (:rec audio)]
           [:span.mr2 [:> bp/Icon {:icon "calendar" :className "mr1"}] (:date audio)]
           [:span.mr2 [:> bp/Icon {:icon "time" :className "mr1"}] (:length audio)]
@@ -87,11 +87,11 @@
         media (-> @species-info :current-species-media)]
     (if species
       [:div.p2
-       [:h2.bp5-heading  (:cname species)]
+       [:h2.bp6-heading  (:cname species)]
        [:p
-        [:span.bp5-ui-text (:local_name species)]
+        [:span.bp6-ui-text (:local_name species)]
         " | "
-        [:span.bp5-ui-text (:sname species)]]
+        [:span.bp6-ui-text (:sname species)]]
        [:p
         [:a {:href (gstring/format "https://ebird.org/species/%s/%s"
                                    (:species_code species)
@@ -114,11 +114,11 @@
         (cond
           ;; media still loading
           (nil? media)
-          [:> bp/SectionCard {:className "bp5-skeleton"}]
+          [:> bp/SectionCard {:className "bp6-skeleton"}]
 
           (empty? (:images media))
           [:> bp/SectionCard
-           [:p.bp5-ui-text "No photos available."]]
+           [:p.bp6-ui-text "No photos available."]]
 
           :else
           (let [images (:images media)]
@@ -131,7 +131,7 @@
                              :id (str "image-tab-" (:idx image))
                              :panel (r/as-element [:<>
                                                    [:img.fit {:src (:src image) :alt (:alt image)}]
-                                                   [:p.bp5-ui-text
+                                                   [:p.bp6-ui-text
                                                     "© "
                                                     [:b (:author image)]
                                                     " "
@@ -146,11 +146,11 @@
                        :collapsible true}
         (cond
           (nil? media)
-          [:> bp/SectionCard {:className "bp5-skeleton"}]
+          [:> bp/SectionCard {:className "bp6-skeleton"}]
 
           (empty? (:recordings media))
           [:> bp/SectionCard
-           [:p.bp5-ui-text "No recordings available."]]
+           [:p.bp6-ui-text "No recordings available."]]
 
           :else
           (doall
@@ -165,7 +165,7 @@
           [:> bp/SectionCard
            [:a {:href (routes/url-for :locality :locality_id (:id locality))}
             (:lname locality)]
-           [:table.bp5-html-table.bp5-html-table-striped.bp5-html-table-bordered
+           [:table.bp6-html-table.bp6-html-table-striped.bp6-html-table-bordered
             [:thead
              [:tr
               [:td "Date"]
@@ -187,7 +187,7 @@
                  [:li {:key (:locality_id l)}
                   [:a {:href (routes/url-for :species :locality_id (:locality_id l) :species_id (:id species))}
                    (:lname l)]
-                  [:span.bp5-tag.bp5-round.bp5-minimal.ml1 (:c l) " times"]])
+                  [:span.bp6-tag.bp6-round.bp6-minimal.ml1 (:c l) " times"]])
                other-localities)]]]
 
        [:> bp/Section {:title "Weekly Record Stats"
