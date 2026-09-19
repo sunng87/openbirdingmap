@@ -16,7 +16,7 @@
                  [conman "0.9.6"]
                  [com.layerware/hugsql-core "0.5.3"]
                  [com.layerware/hugsql-adapter-next-jdbc "0.5.3"]
-                 [org.mariadb.jdbc/mariadb-java-client "3.4.1"]
+                 [org.xerial/sqlite-jdbc "3.49.1.0"]
                  ;; config
                  [stavka "0.7.0"]
                  ;; lifecycle

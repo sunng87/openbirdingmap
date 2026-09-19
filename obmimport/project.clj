@@ -10,7 +10,7 @@
 
                  [dev.weavejester/ragtime.core "0.9.3"]
                  [dev.weavejester/ragtime.next-jdbc "0.9.3"]
-                 [org.mariadb.jdbc/mariadb-java-client "3.3.2"]
+                 [org.xerial/sqlite-jdbc "3.49.1.0"]
                  [environ "1.2.0"]
                  [org.clojure/data.csv "1.0.0"]
                  [com.github.seancorfield/next.jdbc "1.3.909"]

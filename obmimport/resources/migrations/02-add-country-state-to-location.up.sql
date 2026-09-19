@@ -1,6 +1,13 @@
-ALTER TABLE obm_location ADD COLUMN (
-country VARCHAR(64) NOT NULL,
-country_code VARCHAR(12) NOT NULL,
-state_name VARCHAR(128) NOT NULL,
-state_code VARCHAR(56) NOT NULL
-);
+ALTER TABLE obm_location ADD COLUMN country TEXT NOT NULL DEFAULT '';
+
+--;;
+
+ALTER TABLE obm_location ADD COLUMN country_code TEXT NOT NULL DEFAULT '';
+
+--;;
+
+ALTER TABLE obm_location ADD COLUMN state_name TEXT NOT NULL DEFAULT '';
+
+--;;
+
+ALTER TABLE obm_location ADD COLUMN state_code TEXT NOT NULL DEFAULT '';

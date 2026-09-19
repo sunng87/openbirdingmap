@@ -61,7 +61,7 @@
                                                                            :state_code current-state-code})
         species-weekly-raw-stats (db/stat-species-records-by-week {:species_id species-id
                                                                    :state_code current-state-code})
-        weekly-stats-array (let [weeks (int-array 53 0)]
+        weekly-stats-array (let [weeks (int-array 54 0)]
                              (doseq [{w :w c :c} species-weekly-raw-stats]
                                (aset weeks w c))
                              (seq weeks))]

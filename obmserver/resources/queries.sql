@@ -16,7 +16,7 @@ SELECT DISTINCT species_id FROM obm_record WHERE locality_id IN (SELECT id FROM 
 
 -- :name find-species-by-locality-id-and-month :? :*
 -- :doc filter species types for locality by month
-SELECT DISTINCT species_id FROM obm_record WHERE locality_id = :locality_id AND month(record_date) = :month;
+SELECT DISTINCT species_id FROM obm_record WHERE locality_id = :locality_id AND CAST(strftime('%m', record_date) AS INTEGER) = :month;
 
 -- :name find-species-by-ids :? :*
 -- :doc query species by given ids
@@ -32,7 +32,7 @@ SELECT * FROM obm_record WHERE locality_id = :locality_id AND species_id = :spec
 
 -- :name stat-species-records-by-week :? :*
 -- :doc find aggregated number of records by week
-SELECT week(record_date) AS w, count(1) AS c FROM obm_record WHERE locality_id IN (SELECT locality_id FROM obm_location WHERE state_code = :state_code) AND species_id = :species_id GROUP BY w;
+SELECT CAST(strftime('%W', record_date) AS INTEGER) AS w, count(1) AS c FROM obm_record WHERE locality_id IN (SELECT locality_id FROM obm_location WHERE state_code = :state_code) AND species_id = :species_id GROUP BY w;
 
 -- :name find-localities-records-by-species :? :*
 -- :doc find all localities with given species_id

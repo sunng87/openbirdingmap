@@ -14,7 +14,10 @@ Jiangsu(CN-32).
 ### Runtime
 
 - java
-- mariadb
+
+Data is stored in a local [SQLite](https://sqlite.org) database file
+(default `obm.db`, override with env `OBM_DB_FILE`), no external database
+server is required.
 
 ### Development
 

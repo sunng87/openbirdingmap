@@ -1,1 +1,1 @@
-ALTER TABLE obm_record ADD INDEX species_id_key (species_id);
+CREATE INDEX species_id_key ON obm_record (species_id);

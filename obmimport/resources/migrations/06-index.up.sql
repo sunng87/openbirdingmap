@@ -1,5 +1,5 @@
-ALTER TABLE obm_location ADD INDEX state_code_key (state_code);
+CREATE INDEX state_code_key ON obm_location (state_code);
 
 --;;
 
-ALTER TABLE obm_record ADD INDEX locality_species_id_key (locality_id, species_id);
+CREATE INDEX locality_species_id_key ON obm_record (locality_id, species_id);
