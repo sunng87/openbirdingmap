@@ -1,2 +1,5 @@
 {:ebird-api-key "KEY"
+ ;; xeno-canto API v3 key, required for the Sounds section (register at
+ ;; https://xeno-canto.org/explore/api). Sounds are disabled when unset.
+ :xeno-canto-api-key "KEY"
  :http-port 8080}

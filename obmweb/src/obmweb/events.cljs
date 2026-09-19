@@ -169,8 +169,7 @@
                             :response-format (ajax/json-response-format
                                               {:keywords? true}),
                             :on-success [::species-media-loaded],
-                            :on-failure [::request-failed
-                                         [::request-sepcies-media]]},
+                            :on-failure [::species-media-failed]},
                :db (assoc db :current-species-media nil)})))
 
 (re-frame/reg-event-db ::species-media-loaded
@@ -178,6 +177,12 @@
                                   (assoc db
                                          :current-species-media (-> response
                                                                     :results))))
+
+(re-frame/reg-event-db ::species-media-failed
+                       (fn-traced [db _]
+                                  ;; empty map marks media as loaded-but-unavailable,
+                                  ;; so the UI shows an empty state instead of a skeleton
+                                  (assoc db :current-species-media {})))
 
 (re-frame/reg-event-db ::map-set-popup-info
                        (fn [db [_ info]] (assoc db :popup-info info)))

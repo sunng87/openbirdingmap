@@ -111,36 +111,52 @@
 
        [:> bp/Section {:title "Photos"
                        :collapsible true}
-        (if-let [images (not-empty (:images media))]
-         [:> bp/SectionCard
-          [:> bp/Tabs {:id "image-tabs" :renderActiveTabPanelOnly true}
-           (doall
-            (for [image (map-indexed #(assoc %2 :idx %1) images)]
-              [:> bp/Tab {:title (or (not-empty (:title image)) (:idx image))
-                          :key (:idx image)
-                          :id (str "image-tab-" (:idx image))
-                          :panel (r/as-element [:<>
-                                                [:img.fit {:src (:src image) :alt (:alt image)}]
-                                                [:p.bp5-ui-text
-                                                 "© "
-                                                 [:b (:author image)]
-                                                 " "
-                                                 (:state image) ", " (:country image)
-                                                 " | "
-                                                 [:a {:target "_blank" :href (:link image)}
-                                                  (:citation image)]]
-                                                ])}]))]]
-         [:> bp/SectionCard {:className "bp5-skeleton"}])]
+        (cond
+          ;; media still loading
+          (nil? media)
+          [:> bp/SectionCard {:className "bp5-skeleton"}]
+
+          (empty? (:images media))
+          [:> bp/SectionCard
+           [:p.bp5-ui-text "No photos available."]]
+
+          :else
+          (let [images (:images media)]
+            [:> bp/SectionCard
+             [:> bp/Tabs {:id "image-tabs" :renderActiveTabPanelOnly true}
+              (doall
+               (for [image (map-indexed #(assoc %2 :idx %1) images)]
+                 [:> bp/Tab {:title (or (not-empty (:title image)) (:idx image))
+                             :key (:idx image)
+                             :id (str "image-tab-" (:idx image))
+                             :panel (r/as-element [:<>
+                                                   [:img.fit {:src (:src image) :alt (:alt image)}]
+                                                   [:p.bp5-ui-text
+                                                    "© "
+                                                    [:b (:author image)]
+                                                    " "
+                                                    (:state image) ", " (:country image)
+                                                    " | "
+                                                    [:a {:target "_blank" :href (:link image)}
+                                                     (:citation image)]]
+                                                   ])}]))]]))]
 
 
        [:> bp/Section {:title "Sounds"
                        :collapsible true}
-        (if-let [audios (not-empty (:recordings media))]
+        (cond
+          (nil? media)
+          [:> bp/SectionCard {:className "bp5-skeleton"}]
+
+          (empty? (:recordings media))
+          [:> bp/SectionCard
+           [:p.bp5-ui-text "No recordings available."]]
+
+          :else
           (doall
-           (for [audio audios]
+           (for [audio (:recordings media)]
              [:> bp/SectionCard {:key (:id audio)}
-              [audio-and-sono-view audio]]))
-          [:> bp/SectionCard {:className "bp5-skeleton"}])]
+              [audio-and-sono-view audio]])))]
 
 
        (when (and (not-empty records) (some? locality))
