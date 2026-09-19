@@ -11,7 +11,6 @@
 (defn url [path & vars] (apply gstring/format (str url-root path) vars))
 
 (re-frame/reg-event-db ::initialize-db (fn-traced [_ _] db/default-db))
-
 (re-frame/reg-event-fx ::navigate
                        (fn-traced [_ [_ handler]] {:navigate handler}))
 
@@ -48,6 +47,26 @@
                                     fx)]
                            {:db new-db, :fx fx})
                 {:db new-db}))))
+
+(re-frame/reg-event-fx
+ ::load-metadata
+ (fn-traced [{:keys [db]} _]
+            {:http-xhrio {:method :get,
+                          :uri (url "/metadata"),
+                          :format (ajax/json-request-format),
+                          :response-format (ajax/json-response-format
+                                            {:keywords? true}),
+                          :on-success [::metadata-loaded],
+                          :on-failure [::request-failed]},
+             :db (assoc db :metadata nil)}))
+
+(re-frame/reg-event-fx ::metadata-loaded
+                       (fn-traced [{:keys [db]} [_ response]]
+                                  (let [metadata (:results response)]
+                                    {:db (assoc db :metadata metadata),
+                                     ;; load the first region by default
+                                     :dispatch (when-let [first-state-id (-> metadata first :id)]
+                                                 [::load-state first-state-id])})))
 
 (re-frame/reg-event-fx
  ::load-state

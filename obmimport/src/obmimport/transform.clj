@@ -162,3 +162,20 @@
                                :record-observer-id])]
         (jdbc/execute! *ds*
                        (concat ["insert into obm_record(id, species_id, locality_id, record_date, record_count, observer_id) values (?, ?, ?, ?, ?, ?)"] params))))))
+
+(defn upsert-metadata!
+  "Record region metadata (display name and data date range) for a state.
+  On re-import, the stored date range is extended to cover the new data."
+  [state-code items]
+  (let [first-item (first items)
+        lname (str (:location-state first-item) ", " (:location-country first-item))
+        dates (sort (keep #(not-empty (:record-date %)) items))
+        date-start (first dates)
+        date-end (last dates)]
+    (jdbc/execute! *ds*
+                   ["insert into obm_metadata(id, lname, date_start, date_end) values (?, ?, ?, ?)
+                     on conflict(id) do update set
+                       lname = excluded.lname,
+                       date_start = min(obm_metadata.date_start, excluded.date_start),
+                       date_end = max(obm_metadata.date_end, excluded.date_end)"
+                    state-code lname date-start date-end])))

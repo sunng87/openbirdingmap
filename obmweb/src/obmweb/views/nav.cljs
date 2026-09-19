@@ -7,26 +7,24 @@
             [obmweb.subs :as subs]
             [obmweb.routes :as routes]))
 
-(def supported-states
-  [{:id "CN-11" :label "Beijing, China"}
-   {:id "CN-32" :label "Jiangsu, China"}])
-
 (defn state-select [state]
-  (let [items supported-states
+  (let [metadata @(re-frame/subscribe [::subs/metadata])
+        items (mapv #(hash-map :id (:id %) :label (:lname %)) metadata)
         initial-item (->> items (filter #(= (:id %) @state)) first)
         item-renderer (fn [item opt]
                         (reagent/as-element [:> bp/MenuItem {:key (.-id item)
                                                              :text (.-label item)
                                                              :onClick (.-handleClick opt)}]))]
-    [:> bsel/Select {:items items
-                     :activeItem initial-item
-                     :itemRenderer item-renderer
-                     :filterable false
-                     :onItemSelect (fn [item]
-                                     (re-frame/dispatch [::events/load-state (.-id item)])
-                                     (routes/navigate! :home))}
-     [:> bp/Button {:text (:label initial-item)
-                    :rightIcon :double-caret-vertical}]]))
+    (when (some? initial-item)
+      [:> bsel/Select {:items items
+                       :activeItem initial-item
+                       :itemRenderer item-renderer
+                       :filterable false
+                       :onItemSelect (fn [item]
+                                       (re-frame/dispatch [::events/load-state (.-id item)])
+                                       (routes/navigate! :home))}
+       [:> bp/Button {:text (:label initial-item)
+                      :rightIcon :double-caret-vertical}]])))
 
 
 (defn breadcrumbs [state panel locality species]
@@ -35,7 +33,10 @@
           panel (re-frame/subscribe [::subs/active-panel])
           locality (re-frame/subscribe [::subs/current-locality])
           species (re-frame/subscribe [::subs/current-species])
-          home {:text (->> supported-states (filter #(= (:id %) @state)) first :label)
+          home {:text (->> @(re-frame/subscribe [::subs/metadata])
+                           (filter #(= (:id %) @state))
+                           first
+                           :lname)
                 :href (routes/url-for :home)}
           items (case @panel
                   :home-panel [(assoc home :current true)]

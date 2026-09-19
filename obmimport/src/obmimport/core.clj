@@ -39,7 +39,12 @@
             (log/infof "Total species imported %d" (count species))
             (doseq [o ebird-data]
               (im/insert-record! o))
-            (log/infof "Total ebird items %d" (count ebird-data))))))))
+            (log/infof "Total ebird items %d" (count ebird-data))
+            ;; record region metadata for each state covered by this file
+            (doseq [[state-code items] (group-by :location-state-code ebird-data)]
+              (when (not-empty state-code)
+                (log/infof "Record metadata for region %s" state-code)
+                (im/upsert-metadata! state-code items)))))))))
 
 (defn -main [& args]
   (log/info "Update database schema to latest version.")

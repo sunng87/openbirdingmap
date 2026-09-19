@@ -10,7 +10,7 @@ WorkingDirectory=/opt/obm
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=obmserver
-Restart=on-failure
+Restart=always
 RestartSec=5s
 
 [Install]

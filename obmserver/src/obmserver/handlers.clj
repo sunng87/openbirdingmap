@@ -5,6 +5,11 @@
             [manifold.deferred :as m]
             [manifold.executor :as exec]))
 
+(defn get-metadata [req]
+  (-> {:results (db/find-metadata)}
+      (resp/response)
+      (assoc-in [:headers "Cache-Control"] "public,max-age=3600,s-maxage=3600")))
+
 (defn list-localities [req]
   (let [state-code (-> req :path-params :state_code)
         localities (db/find-localities-by-state-id {:state_code state-code})

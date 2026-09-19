@@ -23,6 +23,6 @@
 (defn init []
   (routes/start!)
   (re-frame/dispatch-sync [::events/initialize-db])
-  (re-frame/dispatch-sync [::events/load-state "CN-11"])
+  (re-frame/dispatch-sync [::events/load-metadata])
   (dev-setup)
   (mount-root))

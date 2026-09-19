@@ -2,4 +2,5 @@
 
 (def default-db
   {:name "re-frame"
-   :current-state "CN-11"})
+   :current-state nil
+   :metadata nil})
