@@ -7,7 +7,10 @@
 
 (defn load-ebird [file-path]
   (with-open [the-file (io/reader (io/file file-path))]
-    (let [lines (csv/read-csv the-file :separator \tab)
+    ;; ebd is tab-separated and does NOT use quote-escaping: observer
+    ;; comments may contain raw double quotes, so disable quote parsing
+    ;; entirely (quote char = NUL never matches real content)
+    (let [lines (csv/read-csv the-file :separator \tab :quote (char 0))
           ;; skip the first line
           lines (doall (rest lines))]
       lines)))
@@ -96,10 +99,16 @@
   (into {} (map #(vector (nth % 0) (nth % 2)) ebd-taxonomy)))
 
 (def ebird-taxonomy-dict
-  (with-open [the-file (io/reader (io/resource "ebird_taxonomy_v2023.csv"))]
+  (with-open [the-file (io/reader (io/resource "ebird_taxonomy_v2026.csv"))]
     (let [lines (csv/read-csv the-file :separator \,)
           lines (doall (rest lines))]
       (into-id-species-code-map lines))))
+
+;; species-code -> localized common name, fetched lazily in a single api call
+(def ebird-local-name-dict
+  (delay
+   (into {} (map #(vector (:speciesCode %) (:comName %))
+                 (api/fetch-full-taxonomy)))))
 
 (defn dedup-by-key [k items]
   (vals (into {} (map #(vector (k %) %) items))))
@@ -134,10 +143,9 @@
                                :species-cname
                                :species-sname])
             scode (get ebird-taxonomy-dict (:species-id item))
-            ;; local name from api
-            lname (-> (api/call-ebird-taxonomy [scode])
-                      first
-                      :comName)
+            ;; local name from the full-taxonomy dict
+            lname (when scode
+                    (get @ebird-local-name-dict scode))
             params (conj params scode lname)]
         (jdbc/execute! *ds*
                        (concat ["insert into obm_species(id, cname, sname, species_code, local_name) values (?, ?, ?, ?, ?)"]

@@ -4,6 +4,7 @@
    [environ.core :refer [env]]
    [clojure.tools.logging :as log]
    [clojure.tools.cli :as cli]
+   [next.jdbc :as jdbc]
    [obmimport.migration :as mg]
    [obmimport.transform :as im]))
 
@@ -16,23 +17,29 @@
 
 (defn do-import! [paths]
   (let [datasource (im/datasource)]
-    (binding [im/*ds* datasource]
-      (doseq [path paths]
-        (log/infof "Import ebird data %s" path)
-        (let [ebird-data (mapv im/extract-ebird-item (im/load-ebird path))
-              locations (im/dedup-by-location ebird-data)
-              species (im/dedup-by-species ebird-data)]
-          (doseq [l locations]
-            (log/infof "Import location %s" (:location-locality l))
-            (im/insert-location! l))
-          (log/infof "Total locations imported %d" (count locations))
-          (doseq [s species]
-            (log/infof "Import species %s" (:species-cname s))
-            (im/import-species! s))
-          (log/infof "Total species imported %d" (count species))
-          (doseq [o ebird-data]
-            (im/insert-record! o))
-          (log/infof "Total ebird items %d" (count ebird-data)))))))
+    ;; WAL persists on the db file and allows concurrent readers (the API
+    ;; server) while importing
+    (jdbc/execute! datasource ["PRAGMA journal_mode=WAL"])
+    (doseq [path paths]
+      (log/infof "Import ebird data %s" path)
+      (let [ebird-data (mapv im/extract-ebird-item (im/load-ebird path))
+            locations (im/dedup-by-location ebird-data)
+            species (im/dedup-by-species ebird-data)]
+        ;; import each file atomically in a single transaction; this is also
+        ;; orders of magnitude faster than per-statement autocommit on sqlite
+        (jdbc/with-transaction [tx datasource]
+          (binding [im/*ds* tx]
+            (doseq [l locations]
+              (log/infof "Import location %s" (:location-locality l))
+              (im/insert-location! l))
+            (log/infof "Total locations imported %d" (count locations))
+            (doseq [s species]
+              (log/infof "Import species %s" (:species-cname s))
+              (im/import-species! s))
+            (log/infof "Total species imported %d" (count species))
+            (doseq [o ebird-data]
+              (im/insert-record! o))
+            (log/infof "Total ebird items %d" (count ebird-data))))))))
 
 (defn -main [& args]
   (log/info "Update database schema to latest version.")
