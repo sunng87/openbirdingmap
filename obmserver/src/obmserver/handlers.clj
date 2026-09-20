@@ -82,15 +82,36 @@
 
 (def pool (exec/fixed-thread-executor 10))
 
-(defn get-species-media [req]
-  (let [species-id (-> req :path-params :species_id)
-        species (db/find-species-by-id {:id species-id})
-        species-code (:species_code species)
-        sci-name (:sname species)
+;; server-side cache for crawled media: upstream sites (birdsoftheworld.org,
+;; xeno-canto) take 2-14s per call, way beyond any db query; media for a
+;; species changes rarely, so cache aggressively.
+(defonce ^:private media-cache (atom {}))
 
-        images (m/future-with pool (craw/images species-code))
-        recordings (m/future-with pool (craw/recordings sci-name))]
-    (->  {:results {:images @images
-                    :recordings @recordings}}
+(def ^:private media-cache-ttl-ms (* 24 3600 1000))
+;; cache failures briefly only, they are usually transient (upstream slowness)
+(def ^:private media-cache-failure-ttl-ms (* 5 60 1000))
+
+(defn- cached-species-media [species-id]
+  (let [now (System/currentTimeMillis)
+        entry (get @media-cache species-id)]
+    (if (and entry (< (- now (:fetched-at entry)) (:ttl entry)))
+      (:data entry)
+      (let [species (db/find-species-by-id {:id species-id})
+            species-code (:species_code species)
+            sci-name (:sname species)
+            images (m/future-with pool (craw/images species-code))
+            recordings (m/future-with pool (craw/recordings sci-name))
+            data {:images @images
+                  :recordings @recordings}
+            failed? (and (empty? (:images data)) (empty? (:recordings data)))]
+        (swap! media-cache assoc species-id
+               {:fetched-at now
+                :ttl (if failed? media-cache-failure-ttl-ms media-cache-ttl-ms)
+                :data data})
+        data))))
+
+(defn get-species-media [req]
+  (let [species-id (-> req :path-params :species_id)]
+    (->  {:results (cached-species-media species-id)}
          (resp/response)
          (assoc-in [:headers "Cache-Control"] "public,max-age=3600,s-maxage=3600"))))

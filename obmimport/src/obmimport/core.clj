@@ -44,7 +44,10 @@
             (doseq [[state-code items] (group-by :location-state-code ebird-data)]
               (when (not-empty state-code)
                 (log/infof "Record metadata for region %s" state-code)
-                (im/upsert-metadata! state-code items)))))))))
+                (im/upsert-metadata! state-code items)))))))
+    ;; refresh query planner statistics after data changes
+    (log/info "Analyze database")
+    (jdbc/execute! datasource ["ANALYZE"])))
 
 (defn -main [& args]
   (log/info "Update database schema to latest version.")

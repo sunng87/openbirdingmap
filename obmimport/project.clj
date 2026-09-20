@@ -19,7 +19,7 @@
                  [clj-http "3.13.1"]
                  [cheshire "6.2.0"]
 
-                 [org.clojure/tools.cli "1.1.256"]]
+                 [org.clojure/tools.cli "1.4.256"]]
   :main ^:skip-aot obmimport.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
