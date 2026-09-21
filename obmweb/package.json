@@ -2,8 +2,9 @@
 	"name": "obmweb",
 	"scripts": {
 		"ancient": "clojure -Sdeps '{:deps {com.github.liquidz/antq {:mvn/version \"RELEASE\"}}}' -m antq.core",
-		"watch": "npx shadow-cljs watch app browser-test karma-test",
-		"release": "npx shadow-cljs release app",
+		"copy:maplibre": "mkdir -p resources/public/js/vendor && cp node_modules/maplibre-gl/dist/maplibre-gl.mjs node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs node_modules/maplibre-gl/dist/maplibre-gl.css resources/public/js/vendor/",
+		"watch": "npm run copy:maplibre && npx shadow-cljs watch app",
+		"release": "npm run copy:maplibre && npx shadow-cljs release app",
 		"build-report": "npx shadow-cljs run shadow.cljs.build-report app target/build-report.html"
 	},
 	"dependencies": {
@@ -11,7 +12,7 @@
 		"@blueprintjs/select": "^6.3.6",
 		"chart.js": "4.5.1",
 		"highlight.js": "11.12.0",
-		"maplibre-gl": "5.24.0",
+		"maplibre-gl": "6.10.0",
 		"react": "19.3.0",
 		"react-chartjs-2": "^5.3.1",
 		"react-dom": "19.3.0",

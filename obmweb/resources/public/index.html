@@ -8,7 +8,7 @@
     <link href="https://unpkg.com/normalize.css@^7.0.0" rel="stylesheet" />
     <link href="https://unpkg.com/@blueprintjs/icons@^6.0.0/lib/css/blueprint-icons.css" rel="stylesheet" />
     <link href="https://unpkg.com/@blueprintjs/core@^6.0.0/lib/css/blueprint.css" rel="stylesheet" />
-    <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
+    <link href="/js/vendor/maplibre-gl.css" rel="stylesheet" />
     <link rel="icon" type="image/svg+xml" href="/images/bird.svg">
     <link rel="stylesheet" href="/css/custom.css">
     <title>OpenBirdingMap</title>
@@ -19,6 +19,14 @@
     </noscript>
     <div id="app"></div>
 
-    <script src="/js/compiled/app.js"></script>
+    <!-- maplibre-gl v6 is loaded as a native ES module (it uses import.meta,
+         which closure cannot bundle) and exposed as the window.maplibregl
+         global that the app references; module scripts execute in order, so
+         this runs before app.js -->
+    <script type="module">
+      import * as maplibregl from "/js/vendor/maplibre-gl.mjs";
+      window.maplibregl = maplibregl;
+    </script>
+    <script type="module" src="/js/compiled/app.js"></script>
   </body>
 </html>

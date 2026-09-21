@@ -27,6 +27,10 @@
   {:target     :browser
    :output-dir "resources/public/js/compiled"
    :asset-path "/js/compiled"
+   ;; maplibre-gl v6 is ESM-only and uses import.meta, which closure cannot
+   ;; transpile; exclude it from the bundle and load it as a native ES module
+   ;; (see index.html), referenced via the window.maplibregl global
+   :js-options {:resolve {"maplibre-gl" {:target :global :global "maplibregl"}}}
    :modules
    {:app {:init-fn obmweb.core/init}}
    :devtools
