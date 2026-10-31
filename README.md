@@ -68,6 +68,30 @@ Notes:
   `--skip-migration` when re-importing into an up-to-date database.
 - The import may take a few minutes for large regions.
 
+### 3b. Optional: bird stickers and field-guide text
+
+Species pages can show the bird sticker and Chinese field-guide text from
+[huashu-bird-sticker](https://github.com/alchaincyf/huashu-bird-sticker)
+(stickers are PolyForm Shield licensed, field-guide text CC BY-SA 4.0 —
+attribution is shown on the page).
+
+Clone the sticker repo somewhere, then run the importer with `--stickers`
+against the existing `obm.db` (species are matched by eBird species code,
+falling back to scientific name):
+
+```sh
+git clone --depth 1 https://github.com/alchaincyf/huashu-bird-sticker /opt/huashu-bird-sticker
+
+OBM_DB_FILE=$PWD/obm.db \
+java -jar target/uberjar/obmimport-0.1.0-SNAPSHOT-standalone.jar \
+  --skip-migration --stickers /opt/huashu-bird-sticker
+```
+
+Then point the API server at the `stickers/` subdirectory of the clone via
+`config.edn` (or env `OBM_STICKER_DIR`) as shown below. The server exposes
+the images at `/api/stickers/...`, so no extra web-server config is needed
+(the existing `/api` proxy rule covers it).
+
 ### 4. Run the API server
 
 ```sh
@@ -85,7 +109,10 @@ java -jar target/uberjar/obmserver-0.1.0-SNAPSHOT-standalone.jar
 {:ebird-api-key "KEY"
  ;; optional, enables the Sounds section
  :xeno-canto-api-key "KEY"
- :http-port 8080}
+ :http-port 8080
+ ;; optional, serves bird sticker images at /api/stickers/ (see 3b);
+ ;; can also be set with the OBM_STICKER_DIR env var
+ :obm.sticker.dir "/path/to/huashu-bird-sticker/stickers"}
 ```
 
 The database path defaults to `./obm.db` (relative to the working

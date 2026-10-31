@@ -30,6 +30,10 @@ SELECT * FROM obm_species WHERE id IN (:v*:ids);
 -- :doc query sepecies information by given id
 SELECT * FROM obm_species WHERE id = :id;
 
+-- :name find-species-ext-by-id :? :1
+-- :doc query sticker path and field-guide text for the given species
+SELECT * FROM obm_species_ext WHERE species_id = :id;
+
 -- :name find-records-by-species-and-locality :? :*
 -- :doc filter records by species and locality
 SELECT * FROM obm_record WHERE locality_id = :locality_id AND species_id = :species_id order by record_date;

@@ -6,6 +6,7 @@
    [clojure.tools.cli :as cli]
    [next.jdbc :as jdbc]
    [obmimport.migration :as mg]
+   [obmimport.stickers :as stickers]
    [obmimport.transform :as im]))
 
 (def cli-option
@@ -13,7 +14,8 @@
     :multi true
     :default []
     :update-fn conj]
-   [nil "--skip-migration" "skip database migration"]])
+   [nil "--skip-migration" "skip database migration"]
+   ["-s" "--stickers DIR" "path to a local clone of the huashu-bird-sticker repo; imports sticker paths and zh-Hans field-guide text into obm_species_ext"]])
 
 (defn do-import! [paths]
   (let [datasource (im/datasource)]
@@ -61,16 +63,22 @@
 
           ;; data import
           (let [paths (:data options)]
-            (log/infof "Import data using files %s" paths)
-            (when (empty? paths)
-              (log/info "No data file specified")
-              (System/exit 0))
+            (if (and (empty? paths) (empty? (:stickers options)))
+              (do
+                (log/info "No data file specified")
+                (System/exit 0))
+              (do
+                (when (and (not-empty paths) (empty? (env :ebird-api-key)))
+                  (log/error "Invalid ebird api key")
+                  (System/exit 1))
 
-            (when (empty? (env :ebird-api-key))
-              (log/error "Invalid ebird api key")
-              (System/exit 1))
+                (when (not-empty paths)
+                  (log/infof "Import data using files %s" paths)
+                  (do-import! paths))
 
-            (do-import! paths))))
+                (when-let [sticker-dir (:stickers options)]
+                  (log/infof "Import stickers from %s" sticker-dir)
+                  (stickers/import-stickers! (im/datasource) sticker-dir)))))))
       ;; invalid cli options
       (do
         (log/errorf "Error parsing cli options %s" (pr-str (:errors options)))
