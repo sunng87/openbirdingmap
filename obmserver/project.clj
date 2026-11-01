@@ -8,6 +8,8 @@
                  [info.sunng/ring-jetty9-adapter "0.40.4"]
                  [ring/ring-core "1.15.5"]
                  [ring/ring-json "0.5.1"]
+                 [cheshire "6.2.0"]
+                 [org.clojure/data.csv "1.1.1"]
                  [ring/ring-defaults "0.7.1"]
                  [metosin/reitit-ring "0.11.0"]
                  [ring-cors "0.1.13"]

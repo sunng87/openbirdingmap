@@ -2,4 +2,10 @@
  ;; xeno-canto API v3 key, required for the Sounds section (register at
  ;; https://xeno-canto.org/explore/api). Sounds are disabled when unset.
  :xeno-canto-api-key "KEY"
+ ;; optional, root of a huashu-bird-sticker clone
+ ;; (https://github.com/alchaincyf/huashu-bird-sticker, the directory
+ ;; containing stickers/ and data/); enables sticker images and field-guide
+ ;; text on species pages. Dotted keys are nested maps in config.edn;
+ ;; alternatively set the OBM_STICKER_DIR env var. Disabled when unset.
+ :obm {:sticker {:dir "/path/to/huashu-bird-sticker"}}
  :http-port 8080}
