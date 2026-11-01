@@ -4,7 +4,8 @@
  :xeno-canto-api-key "KEY"
  ;; optional, path to the stickers/ subdirectory of a huashu-bird-sticker
  ;; clone (https://github.com/alchaincyf/huashu-bird-sticker); enables
- ;; /api/stickers/... images on species pages. Can also be set with the
- ;; OBM_STICKER_DIR env var. Disabled when unset.
- :obm.sticker.dir "/path/to/huashu-bird-sticker/stickers"
+ ;; /api/stickers/... images on species pages. Dotted keys are nested maps
+ ;; in config.edn; alternatively set the OBM_STICKER_DIR env var.
+ ;; Disabled when unset.
+ :obm {:sticker {:dir "/path/to/huashu-bird-sticker/stickers"}}
  :http-port 8080}

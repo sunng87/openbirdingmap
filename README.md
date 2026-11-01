@@ -88,7 +88,8 @@ java -jar target/uberjar/obmimport-0.1.0-SNAPSHOT-standalone.jar \
 ```
 
 Then point the API server at the `stickers/` subdirectory of the clone via
-`config.edn` (or env `OBM_STICKER_DIR`) as shown below. The server exposes
+`config.edn` (note: stavka treats dots in edn keys as nesting, so use the
+nested form) or env `OBM_STICKER_DIR` as shown below. The server exposes
 the images at `/api/stickers/...`, so no extra web-server config is needed
 (the existing `/api` proxy rule covers it).
 
@@ -111,8 +112,9 @@ java -jar target/uberjar/obmserver-0.1.0-SNAPSHOT-standalone.jar
  :xeno-canto-api-key "KEY"
  :http-port 8080
  ;; optional, serves bird sticker images at /api/stickers/ (see 3b);
- ;; can also be set with the OBM_STICKER_DIR env var
- :obm.sticker.dir "/path/to/huashu-bird-sticker/stickers"}
+ ;; dotted keys are nested maps in config.edn; alternatively set the
+ ;; OBM_STICKER_DIR env var
+ :obm {:sticker {:dir "/path/to/huashu-bird-sticker/stickers"}}
 ```
 
 The database path defaults to `./obm.db` (relative to the working
