@@ -1,10 +1,9 @@
 (ns obmserver.handlers
   (:require [obmserver.db :as db]
             [obmserver.crawling :as craw]
-            [cheshire.core :as json]
+            [obmserver.stickers :as stickers]
             [clojure.java.io :as io]
             [ring.util.response :as resp]
-            [stavka.core :refer [$$]]
             [manifold.deferred :as m]
             [manifold.executor :as exec]))
 
@@ -59,13 +58,13 @@
         state-code (-> req :params :state_code)
         ;; query
         species (db/find-species-by-id {:id species-id})
-        species-ext (db/find-species-ext-by-id {:id species-id})
+        species-ext (stickers/species-ext (:species_code species) (:sname species))
         species (cond-> species
-                  (:sticker_path species-ext)
-                  (assoc :sticker (str "/api/stickers/" (:sticker_path species-ext)))
+                  (:sticker-path species-ext)
+                  (assoc :sticker (str "/api/stickers/" (:sticker-path species-ext)))
 
-                  (:field_guide species-ext)
-                  (assoc :field_guide (json/parse-string (:field_guide species-ext))))
+                  (:field-guide species-ext)
+                  (assoc :field_guide (:field-guide species-ext)))
         records (when locality-id
                   (db/find-records-by-species-and-locality {:species_id species-id
                                                             :locality_id locality-id}))
@@ -90,10 +89,10 @@
   (let [species-id (-> req :path-params :species_id)]
     (resp/response {:results {:image (craw/images species-id)}})))
 
-;; directory holding the sticker images, i.e. the stickers/ subdirectory of a
-;; checkout of https://github.com/alchaincyf/huashu-bird-sticker
+;; root of a checkout of https://github.com/alchaincyf/huashu-bird-sticker;
+;; sticker images live in its stickers/ subdirectory
 (defn- sticker-dir []
-  ($$ :obm.sticker.dir nil))
+  (some-> (stickers/sticker-repo-dir) (io/file "stickers")))
 
 (defn get-sticker [req]
   (let [root-dir (sticker-dir)
