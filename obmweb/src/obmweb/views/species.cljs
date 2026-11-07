@@ -112,6 +112,43 @@
         days-since (Math/floor (/ (- today start-of-year) (* 24 60 60 1000)))]
     (Math/ceil (/ days-since 7))))
 
+(def ^:private sticker-repo-url "https://github.com/alchaincyf/huashu-bird-sticker")
+
+(defn- sticker-view [species]
+  (when-let [sticker (:sticker species)]
+    [:div.sticker-box
+     [:img {:src sticker :alt (:cname species)}]
+     [:div.sticker-attr
+      [:a {:href sticker-repo-url :target "_blank"} "Sticker © huashu-bird-sticker"]]]))
+
+(defn- field-guide-view [guide]
+  [:div.bp6-running-text
+   (when-let [impression (:impression guide)]
+     [:p impression])
+   (when (seq (:marks guide))
+     [:<>
+      [:> bp/H5 "Identification"]
+      [:ul
+       (map-indexed (fn [i mark] [:li {:key i} mark]) (:marks guide))]])
+   (when-let [sex-age (:sexAge guide)]
+     [:p [:b "Sex & Age: "] sex-age])
+   (when (seq (:similar guide))
+     [:<>
+      [:> bp/H5 "Similar Species"]
+      [:ul
+       (map-indexed (fn [i s]
+                      [:li {:key i}
+                       [:b (:zh s)] " (" [:i (:sci s)] "): " (:diff s)])
+                    (:similar guide))]])
+   (when-let [fun-fact (:funFact guide)]
+     [:p [:b "Fun Fact: "] fun-fact])
+   [:p.sticker-attr
+    "Field guide text"
+    (when-let [based-on (:basedOn guide)]
+      [:<> " (adapted from " [:a {:href based-on :target "_blank"} "Chinese Wikipedia"] ")"])
+    " · " [:a {:href sticker-repo-url :target "_blank"} "huashu-bird-sticker"]
+    " · CC BY-SA 4.0"]])
+
 (defn- chart-view [weekly-stats]
   (let [bg-color (update (into [] (repeat 53 "#D3D8DE")) (current-week) (constantly "#738091"))]
     [:> chartcomps/Bar {:data {:labels (mapv #(str "W" %) (range 0 54))
@@ -133,6 +170,7 @@
         media (-> @species-info :current-species-media)]
     (if species
       [:div.p2
+       [sticker-view species]
        [:h2.bp6-heading  (:cname species)]
        [:p
         [:span.bp6-ui-text (:local_name species)]
@@ -154,6 +192,12 @@
              :href (gstring/format "https://xeno-canto.org/explore?query=%s"
                                    (:cname species))}
          "xeno-canto.org"]]
+
+       (when-let [guide (:field_guide species)]
+         [:> bp/Section {:title "Field Guide"
+                         :collapsible true}
+          [:> bp/SectionCard
+           [field-guide-view guide]]])
 
        [:> bp/Section {:title "Photos"
                        :collapsible true}

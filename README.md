@@ -68,6 +68,28 @@ Notes:
   `--skip-migration` when re-importing into an up-to-date database.
 - The import may take a few minutes for large regions.
 
+### 3b. Optional: bird stickers and field-guide text
+
+Species pages can show the bird sticker and Chinese field-guide text from
+[huashu-bird-sticker](https://github.com/alchaincyf/huashu-bird-sticker)
+(stickers are PolyForm Shield licensed, field-guide text CC BY-SA 4.0 —
+attribution is shown on the page).
+
+This is a pure runtime dependency of the API server — nothing is imported
+into `obm.db`. Just clone the repo and point the server at it
+(matched against species by eBird species code, falling back to
+scientific name):
+
+```sh
+git clone --depth 1 https://github.com/alchaincyf/huashu-bird-sticker /opt/huashu-bird-sticker
+```
+
+Then add the clone path to `config.edn` (note: stavka treats dots in edn
+keys as nesting, so use the nested form) or set env `OBM_STICKER_DIR` as
+shown below. The server loads the sticker index and field-guide text at
+startup and exposes the images at `/api/stickers/...`, so no extra
+web-server config is needed (the existing `/api` proxy rule covers it).
+
 ### 4. Run the API server
 
 ```sh
@@ -85,7 +107,12 @@ java -jar target/uberjar/obmserver-0.1.0-SNAPSHOT-standalone.jar
 {:ebird-api-key "KEY"
  ;; optional, enables the Sounds section
  :xeno-canto-api-key "KEY"
- :http-port 8080}
+ :http-port 8080
+ ;; optional, serves bird sticker images at /api/stickers/ (see 3b);
+ ;; path to the repo root (the directory containing stickers/ and data/);
+ ;; dotted keys are nested maps in config.edn; alternatively set the
+ ;; OBM_STICKER_DIR env var
+ :obm {:sticker {:dir "/path/to/huashu-bird-sticker"}}
 ```
 
 The database path defaults to `./obm.db` (relative to the working

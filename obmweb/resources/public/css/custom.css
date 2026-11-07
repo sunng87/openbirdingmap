@@ -98,3 +98,19 @@ footer {
     display: none;
   }
 }
+
+.sticker-box {
+  float: right;
+  width: 140px;
+  margin-left: 16px;
+  text-align: center;
+}
+
+.sticker-box img {
+  width: 100%;
+}
+
+.sticker-attr {
+  font-size: 11px;
+  color: #8a9ba8;
+}
