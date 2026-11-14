@@ -9,6 +9,7 @@
             ["@astryxdesign/core/Collapsible" :as ax-collapsible]
             ["@astryxdesign/core/Heading" :as ax-heading]
             ["@astryxdesign/core/Lightbox" :as ax-lightbox]
+            ["@astryxdesign/core/Link" :as ax-link]
             ["@astryxdesign/core/MetadataList" :as ax-metadata]
             ["@astryxdesign/core/Skeleton" :as ax-skeleton]
             ["@astryxdesign/core/Spinner" :as ax-spinner]
@@ -31,6 +32,7 @@
 
 (defn- audio-and-sono-view [audio]
   (let [playing? (r/atom false)
+        sono-open? (r/atom false)
         player (atom nil)]
     (fn []
       (let [has-audio? (not-empty (:file audio))]
@@ -67,15 +69,19 @@
             [:> ax-metadata/MetadataListItem {:label "Location"
                                               :icon (r/as-element [:> lucide/MapPin {:size 14 :aria-hidden true}])}
              (str (:loc audio) ", " (:cnt audio))]]
+           [:div.mt1
+            [:> ax-link/Link {:on-click #(swap! sono-open? not)
+                              :aria-expanded (str @sono-open?)}
+             [:span.mr1 [:> lucide/BarChart3 {:size 14 :aria-hidden true}]] "sono"]]
+           (when @sono-open?
+             [:div.overflow-auto.mt1
+              [:img.pr1.pl1 {:src (-> audio :sono :full)
+                             :alt "sono"
+                             :referrer-policy "no-referrer"}]])
            [:audio.hide {:src (:file audio) :preload "none"
                          :ref #(reset! player %)
                          :on-play #(reset! playing? true)
-                         :on-pause #(reset! playing? false)}]]]
-         [:> ax-collapsible/Collapsible
-          {:trigger "spectrogram"
-           :defaultIsOpen false}
-          [:div.overflow-auto.mt1
-           [:img.pr1.pl1 {:src (-> audio :sono :full) :alt "sono"}]]]]))))
+                         :on-pause #(reset! playing? false)}]]]]))))
 
 (defn- photo-credits
   "Credit bar for one photo; used both inline and as the Lightbox caption."
@@ -120,12 +126,19 @@
             [:img.fit {:src (:src image)
                        :alt (:alt image)
                        :style (when-not loaded? {:display "none"})
+                       ;; external media CDNs (birdsoftheworld/macaulay) use
+                       ;; referer-based hotlink protection; sending no referer
+                       ;; is commonly whitelisted
+                       :referrer-policy "no-referrer"
                        ;; cached images can complete before React attaches
                        ;; onLoad; catch that case via the ref
                        :ref (fn [el]
                               (when (and el (.-complete el) (pos? (.-naturalWidth el)))
                                 (swap! loaded-srcs conj (:src image))))
-                       :on-load #(swap! loaded-srcs conj (:src image))}]
+                       :on-load #(swap! loaded-srcs conj (:src image))
+                       ;; on error, stop hiding the image: the credits bar and
+                       ;; alt text are more useful than an eternal skeleton
+                       :on-error #(swap! loaded-srcs conj (:src image))}]
             [photo-credits image n i]]
            ;; astryx Lightbox provides prev/next, arrow keys and swipe
            [:> ax-lightbox/Lightbox
