@@ -75,9 +75,8 @@
              [:span.mr1 [:> lucide/BarChart3 {:size 14 :aria-hidden true}]] "sono"]]
            (when @sono-open?
              [:div.overflow-auto.mt1
-              [:img.pr1.pl1 {:src (-> audio :sono :full)
-                             :alt "sono"
-                             :referrer-policy "no-referrer"}]])
+              [:img.sono-img {:src (-> audio :sono :full)
+                              :alt "sono"}]])
            [:audio.hide {:src (:file audio) :preload "none"
                          :ref #(reset! player %)
                          :on-play #(reset! playing? true)

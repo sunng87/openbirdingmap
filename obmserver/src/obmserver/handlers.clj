@@ -1,6 +1,7 @@
 (ns obmserver.handlers
   (:require [obmserver.db :as db]
             [obmserver.crawling :as craw]
+            [clj-http.client :as http]
             [ring.util.response :as resp]
             [manifold.deferred :as m]
             [manifold.executor :as exec]))
@@ -110,8 +111,74 @@
                 :data data})
         data))))
 
+;; --- media proxy -----------------------------------------------------------
+;; Media lives on external CDNs (Macaulay photos on
+;; cdn.download.ams.birds.cornell.edu, spectrograms/audio on xeno-canto.org).
+;; Serving it through the API keeps browser/CDN hotlink rules out of the
+;; picture and lets us normalize asset URLs.
+
+(def ^:private media-host-allowlist
+  #{"cdn.download.ams.birds.cornell.edu"
+    "birdsoftheworld.org"
+    "xeno-canto.org"
+    "www.xeno-canto.org"})
+
+(defn- allowed-media-url?
+  [u]
+  (try
+    (let [host (.getHost (java.net.URI. ^String u))]
+      (boolean (some #(or (= host %) (.endsWith ^String host (str "." %)))
+                     media-host-allowlist)))
+    (catch Exception _ false)))
+
+(defn- normalize-asset-url
+  "Macaulay asset URLs need an explicit size segment; data-asset-src comes
+  without one and the CDN answers 404 NoSuchKey."
+  [u]
+  (if (re-find #"/api/v[12]/asset/\d+$" u)
+    (str u "/1200")
+    u))
+
+(defn media-proxy [req]
+  (let [u (-> req :params :url)]
+    (if-not (and (string? u) (allowed-media-url? u))
+      {:status 403 :body "media host not allowed"}
+      (try
+        (let [r (http/get (normalize-asset-url u)
+                          {:socket-timeout 10000
+                           :connection-timeout 5000
+                           :as :byte-array})]
+          (if (= 200 (:status r))
+            (-> (resp/response (:body r))
+                (resp/content-type (get-in r [:headers "Content-Type"] "application/octet-stream"))
+                (assoc-in [:headers "Cache-Control"] "public,max-age=86400"))
+            {:status 502 :body (str "upstream status " (:status r))}))
+        (catch Exception e
+          {:status 502 :body (str "upstream error: " (.getMessage e))})))))
+
+(defn- proxied-media-url
+  [u]
+  (when u
+    (str "/api/media?url="
+         (java.net.URLEncoder/encode ^String u "UTF-8"))))
+
+(defn- rewrite-media-urls
+  "Point browser-facing media at the proxy; :link stays direct (it is a page
+  URL, not media)."
+  [media]
+  (-> media
+      (update :images (fn [images]
+                        (mapv #(update % :src proxied-media-url) images)))
+      (update :recordings (fn [recordings]
+                            (mapv (fn [rec]
+                                    (-> rec
+                                        (update :file proxied-media-url)
+                                        (update :sono (fn [s]
+                                                        (some-> s (update :full proxied-media-url))))))
+                                  recordings)))))
+
 (defn get-species-media [req]
   (let [species-id (-> req :path-params :species_id)]
-    (->  {:results (cached-species-media species-id)}
+    (->  {:results (rewrite-media-urls (cached-species-media species-id))}
          (resp/response)
          (assoc-in [:headers "Cache-Control"] "public,max-age=3600,s-maxage=3600"))))

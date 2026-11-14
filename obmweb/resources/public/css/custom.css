@@ -9,6 +9,14 @@ a svg {
   vertical-align: middle;
 }
 
+/* spectrogram: keep natural size (astryx reset would scale it to the
+   container via img{max-width:100%}); the overflow-auto wrapper scrolls */
+img.sono-img {
+  max-width: none;
+  width: auto;
+  height: auto;
+}
+
 /* maplibre marker pin: reset's img{height:auto} beats the width/height
    attributes, so pin the marker size in CSS */
 .maplibregl-marker img {
