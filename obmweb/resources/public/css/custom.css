@@ -1,6 +1,64 @@
 header {
 }
 
+/* astryx reset makes replaced elements display:block — restore inline flow
+   for icons used inside text (labels, links) */
+span svg,
+a svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* spectrogram: keep natural size (astryx reset would scale it to the
+   container via img{max-width:100%}); the overflow-auto wrapper scrolls */
+img.sono-img {
+  max-width: none;
+  width: auto;
+  height: auto;
+}
+
+/* maplibre marker pin: reset's img{height:auto} beats the width/height
+   attributes, so pin the marker size in CSS */
+.maplibregl-marker img {
+  width: 24px;
+  height: 24px;
+}
+
+/* small pill for counts (replaces blueprint Tag) */
+.chip {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 10px;
+  border-radius: 999px;
+  background-color: #edf1f5;
+  color: #404854;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* striped data table (replaces blueprint html-table) */
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+table.data-table th,
+table.data-table td {
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid #e3e8ee;
+}
+
+table.data-table thead th {
+  background-color: #f2f5f8;
+  font-weight: 600;
+}
+
+table.data-table tbody tr:nth-child(even) {
+  background-color: #f7f9fb;
+}
+
 footer {
   border-top: 1px #d8e1e8 solid;
 }
@@ -36,6 +94,12 @@ footer {
 /* photo carousel */
 .photo-frame {
   width: 100%;
+  cursor: pointer;
+}
+
+.photo-frame:focus-visible {
+  outline: 2px solid #2d72d2;
+  outline-offset: 2px;
 }
 
 .photo-frame img.fit {
@@ -94,7 +158,7 @@ footer {
     z-index: 2001;
   }
 
-  div.bp6-navbar-group:last-of-type {
+  .nav-end {
     display: none;
   }
 }

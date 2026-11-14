@@ -4,10 +4,14 @@
     <meta charset='utf-8'>
     <meta name="viewport"
           content="width=device-width,initial-scale=1">
+    <!-- external media CDNs (birdsoftheworld/macaulay) use referer-based
+         hotlink protection; sending no referer is commonly whitelisted -->
+    <meta name="referrer" content="no-referrer">
     <link rel="stylesheet" href="https://unpkg.com/basscss@8.0.2/css/basscss.min.css">
-    <link href="https://unpkg.com/normalize.css@^7.0.0" rel="stylesheet" />
-    <link href="https://unpkg.com/@blueprintjs/icons@^6.0.0/lib/css/blueprint-icons.css" rel="stylesheet" />
-    <link href="https://unpkg.com/@blueprintjs/core@^6.0.0/lib/css/blueprint.css" rel="stylesheet" />
+    <link href="/css/vendor/astryx-reset.css" rel="stylesheet" />
+    <link href="/css/vendor/astryx.css" rel="stylesheet" />
+    <link href="/css/vendor/astryx-theme-neutral.css" rel="stylesheet" />
+    <link href="/css/vendor/astryx-fonts.css" rel="stylesheet" />
     <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
     <link rel="icon" type="image/svg+xml" href="/images/bird.svg">
     <link rel="stylesheet" href="/css/custom.css">
