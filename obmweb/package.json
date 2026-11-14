@@ -7,10 +7,14 @@
 		"build-report": "npx shadow-cljs run shadow.cljs.build-report app target/build-report.html"
 	},
 	"dependencies": {
+		"@astryxdesign/core": "^0.7.15",
+		"@astryxdesign/theme-neutral": "^0.7.15",
 		"@blueprintjs/core": "^6.20.0",
 		"@blueprintjs/select": "^6.3.6",
+		"@stylexjs/stylex": "^0.19.2",
 		"chart.js": "4.5.1",
 		"highlight.js": "11.12.0",
+		"lucide-react": "^1.72.0",
 		"maplibre-gl": "5.24.0",
 		"react": "19.3.0",
 		"react-chartjs-2": "^5.3.1",
@@ -21,6 +25,6 @@
 		"change-case": "5.0.2"
 	},
 	"devDependencies": {
-		"shadow-cljs": "3.5.3"
+		"shadow-cljs": "^3.5.3"
 	}
 }
