@@ -1,6 +1,21 @@
 header {
 }
 
+/* astryx reset makes replaced elements display:block — restore inline flow
+   for icons used inside text (labels, links) */
+span svg,
+a svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* maplibre marker pin: reset's img{height:auto} beats the width/height
+   attributes, so pin the marker size in CSS */
+.maplibregl-marker img {
+  width: 24px;
+  height: 24px;
+}
+
 /* small pill for counts (replaces blueprint Tag) */
 .chip {
   display: inline-block;

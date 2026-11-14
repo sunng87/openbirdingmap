@@ -35,7 +35,7 @@
       [:div.p2
        [:h2 (:lname locality)]
        [:div.mb2
-        [:> ax-icon/Icon {:icon "calendar"}] " Filter by month: "
+        [:span.mr1 [:> ax-icon/Icon {:icon "calendar"}]] "Filter by month: "
         [:span.ml1
          [:> ax-dropdown/DropdownMenu
           {:items (month-menu-items locality)

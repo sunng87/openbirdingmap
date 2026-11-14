@@ -9,8 +9,10 @@
             ["@astryxdesign/core/Collapsible" :as ax-collapsible]
             ["@astryxdesign/core/Heading" :as ax-heading]
             ["@astryxdesign/core/Lightbox" :as ax-lightbox]
+            ["@astryxdesign/core/MetadataList" :as ax-metadata]
             ["@astryxdesign/core/Skeleton" :as ax-skeleton]
             ["@astryxdesign/core/Spinner" :as ax-spinner]
+            ["@astryxdesign/core/Stack" :as ax-stack]
             [goog.string :as gstring]
             [goog.string.format]
             [clojure.string :as cstring]
@@ -33,32 +35,38 @@
     (fn []
       (let [has-audio? (not-empty (:file audio))]
         [:<>
-         [:div.flex.items-start
-          [:div.mr2
-           [:> ax-button/Button
-            {:label (if @playing? "pause audio" "play audio")
-             :isIconOnly true
-             :variant "secondary"
-             :isDisabled (not has-audio?)
-             :icon (r/as-element
-                    (if @playing?
-                      [:> lucide/Pause {:size 18 :aria-hidden true}]
-                      [:> lucide/Play {:size 18 :aria-hidden true}]))
-             :on-click #(if (.-paused @player)
-                          (do
-                            ;; pause other audios
-                            (doseq [a (.querySelectorAll js/document "audio")]
-                              (.pause a))
-                            (.play @player))
-                          (.pause @player))}]]
-          [:div
+         [:> ax-stack/HStack {:gap 2 :vAlign "start"}
+          [:> ax-button/Button
+           {:label (if @playing? "pause audio" "play audio")
+            :isIconOnly true
+            :variant "secondary"
+            :isDisabled (not has-audio?)
+            :icon (r/as-element
+                   (if @playing?
+                     [:> lucide/Pause {:size 18 :aria-hidden true}]
+                     [:> lucide/Play {:size 18 :aria-hidden true}]))
+            :on-click #(if (.-paused @player)
+                         (do
+                           ;; pause other audios
+                           (doseq [a (.querySelectorAll js/document "audio")]
+                             (.pause a))
+                           (.play @player))
+                         (.pause @player))}]
+          [:> ax-stack/VStack {:gap 1}
            [:> ax-heading/Heading {:level 4} (:type audio)]
-           [:p
-            [:span.mr2 [:> lucide/User {:size 14 :aria-hidden true}] (:rec audio)]
-            [:span.mr2 [:> lucide/Calendar {:size 14 :aria-hidden true}] (:date audio)]
-            [:span.mr2 [:> lucide/Clock {:size 14 :aria-hidden true}] (:length audio)]
-            [:br]
-            [:span.mr2 [:> lucide/MapPin {:size 14 :aria-hidden true}] (str (:loc audio) ", " (:cnt audio))]]
+           [:> ax-metadata/MetadataList
+            [:> ax-metadata/MetadataListItem {:label "Recorder"
+                                              :icon (r/as-element [:> lucide/User {:size 14 :aria-hidden true}])}
+             (:rec audio)]
+            [:> ax-metadata/MetadataListItem {:label "Date"
+                                              :icon (r/as-element [:> lucide/Calendar {:size 14 :aria-hidden true}])}
+             (:date audio)]
+            [:> ax-metadata/MetadataListItem {:label "Length"
+                                              :icon (r/as-element [:> lucide/Clock {:size 14 :aria-hidden true}])}
+             (:length audio)]
+            [:> ax-metadata/MetadataListItem {:label "Location"
+                                              :icon (r/as-element [:> lucide/MapPin {:size 14 :aria-hidden true}])}
+             (str (:loc audio) ", " (:cnt audio))]]
            [:audio.hide {:src (:file audio) :preload "none"
                          :ref #(reset! player %)
                          :on-play #(reset! playing? true)
@@ -112,6 +120,11 @@
             [:img.fit {:src (:src image)
                        :alt (:alt image)
                        :style (when-not loaded? {:display "none"})
+                       ;; cached images can complete before React attaches
+                       ;; onLoad; catch that case via the ref
+                       :ref (fn [el]
+                              (when (and el (.-complete el) (pos? (.-naturalWidth el)))
+                                (swap! loaded-srcs conj (:src image))))
                        :on-load #(swap! loaded-srcs conj (:src image))}]
             [photo-credits image n i]]
            ;; astryx Lightbox provides prev/next, arrow keys and swipe

@@ -20,7 +20,7 @@
                                                    l]))}
                   [:img
                    {:src "/images/bird.svg",
-                    :weight 24,
+                    :width 24,
                     :height 24,
                     :style {:cursor "pointer"}}]])
          localities)))
