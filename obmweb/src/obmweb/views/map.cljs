@@ -3,7 +3,6 @@
             [obmweb.events :as events]
             [obmweb.routes :as routes]
             [obmweb.subs :as subs]
-            ["@blueprintjs/core" :as bp]
             ["react-map-gl/maplibre" :as mapgl]
             ["maplibre-gl" :as maplibre-gl]))
 

@@ -16,3 +16,6 @@
 
 # clj-kondo cache
 /.clj-kondo/.cache
+
+# astryx design-system css, copied from node_modules by npm run copy-vendor-css
+/resources/public/css/vendor/

@@ -2,6 +2,8 @@
   (:require
    [reagent.dom.client :as rdom-client]
    [re-frame.core :as re-frame]
+   ["@astryxdesign/core/theme" :as ax-theme]
+   ["@astryxdesign/theme-neutral/built" :as neutral-theme]
    [obmweb.events :as events]
    [obmweb.routes :as routes]
    [obmweb.views :as views]
@@ -20,7 +22,9 @@
 
 (defn ^:dev/after-load mount-root []
   (re-frame/clear-subscription-cache!)
-  (rdom-client/render react-root [views/main-panel]))
+  (rdom-client/render react-root
+                      [:> ax-theme/Theme {:theme neutral-theme/neutralTheme}
+                       [views/main-panel]]))
 
 (defn init []
   (routes/start!)

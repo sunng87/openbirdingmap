@@ -1,7 +1,9 @@
 (ns obmweb.views.about
   (:require [re-frame.core :as rf]
             [clojure.string :as cstring]
-            ["@blueprintjs/core" :as bp]
+            ["@astryxdesign/core/Heading" :as ax-heading]
+            ["@astryxdesign/core/Skeleton" :as ax-skeleton]
+            ["lucide-react" :as lucide]
             [obmweb.routes :as routes]
             [obmweb.subs :as subs]
             [obmweb.views.nav :refer [navbar]]))
@@ -19,8 +21,8 @@
 (defn about-panel []
   (let [metadata (rf/subscribe [::subs/metadata])]
     [:div.p2
-     [:h2.bp-heading "About"]
-     [:> bp/Text
+     [:> ax-heading/Heading {:level 2} "About"]
+     [:p
       "OpenBirdingMap is created by "
       [:a {:href "https://sunng.info" :target "_blank"} "Ning Sun"]
       ". This website displays latest birding records from "
@@ -28,25 +30,24 @@
       ". The source code, including data transformation tool, is open sourced on "
       [:a {:href "https://github.com/sunng87/openbirdingmap" :target "_blank"} "github"]
       "."]
-     [:h3.bp-heading "Data Version"]
+     [:> ax-heading/Heading {:level 3} "Data Version"]
      (if @metadata
-       [:ul.bp6-list
+       [:ul
         (for [m @metadata]
           [:li {:key (:id m)}
            (str (:id m) ": " (format-month-year (:date_start m)) " - " (format-month-year (:date_end m)))])]
-       [:ul.bp6-list
-        [:li.bp6-skeleton "loading"]])]))
+       [:> ax-skeleton/Skeleton {:count 2}])]))
 
 (defn footer-panel []
   [:footer.p2
-   [:p.bp6-ui-text
+   [:p
     [:a {:href "https://obm.sunng.info/"} "OpenBirdingMap"]
     " - Data from "
     [:a {:href "https://ebird.org" :target "_blank"} "eBird"]
     "."]
-   [:p.bp6-ui-text
+   [:p
     "Created with 💓, Clojure and ClojureScript. "
     [:a {:href "https://github.com/sunng87/openbirdingmap" :target "_blank"}
-     [:> bp/Icon {:icon "git-repo"}]]]])
+     [:> lucide/GitBranch {:size 14 :aria-hidden true}]]]])
 
 (defmethod routes/panels :about-panel [] [about-panel])

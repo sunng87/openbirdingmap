@@ -2,7 +2,9 @@
   (:require
    [re-frame.core :as re-frame]
    [reagent.core :as r]
-   ["@blueprintjs/core" :as bp]
+   ["@astryxdesign/core/Heading" :as ax-heading]
+   ["@astryxdesign/core/Skeleton" :as ax-skeleton]
+   ["@astryxdesign/core/TabList" :as ax-tablist]
    [obmweb.events :as events]
    [obmweb.routes :as routes]
    [obmweb.subs :as subs]
@@ -16,35 +18,42 @@
 ;; home
 
 (defn localities-list []
-  (let [state (re-frame/subscribe [::subs/state])]
-    [:div.p2
-     (if-let [l (-> @state :localities first)]
-       [:h2.bp6-heading (str (:state_name l) ", " (:country l))]
-       [:h2.bp6-heading.bp6-skeleton "not loaded"])
-     [:> bp/Tabs {:id "state-tabs" :renderActiveTabPanelOnly true}
+  (let [state (re-frame/subscribe [::subs/state])
+        tab (r/atom "localities")]
+    (fn []
+      [:div.p2
+       (if-let [l (-> @state :localities first)]
+         [:> ax-heading/Heading {:level 2}
+          (str (:state_name l) ", " (:country l))]
+         [:> ax-skeleton/Skeleton {:width "60%" :height 24}])
 
-      [:> bp/Tab {:title "Localities"
-                  :key "state-localities-tab"
-                  :id "state-localities-tab"
-                  :panel (r/as-element
-                          (when (not-empty (:localities @state))
-                            [:ul
-                             (for [l (:localities @state)]
-                               [:li {:key (str "locality-" (:id l))}
-                                [:a {:href (routes/url-for :locality :locality_id (:id l))}
-                                 (:lname l)]
-                                [:span.bp6-tag.bp6-round.bp6-minimal.ml1 (:species_count l) " species"]])]))}]
-      [:> bp/Tab {:title "Species"
-                  :key "state-species-tab"
-                  :id "state-species-tab"
-                  :panel (r/as-element
-                          (when (not-empty (:species @state))
-                            [:ul
-                             (for [s (:species @state)]
-                               [:li {:key (str "species-" (:id s))}
-                                [:a {:href "#"}
-                                 (:local_name s)]
-                                [:span.ml1 (:cname s)]])]))}]]]))
+       [:> ax-tablist/TabList
+        {:aria-label "State data"
+         :value @tab
+         :onChange #(reset! tab %)}
+        [:> ax-tablist/Tab {:value "localities" :label "Localities"}]
+        [:> ax-tablist/Tab {:value "species" :label "Species"}]]
+
+       (case @tab
+         "localities"
+         (when (not-empty (:localities @state))
+           [:ul
+            (for [l (:localities @state)]
+              [:li {:key (str "locality-" (:id l))}
+               [:a {:href (routes/url-for :locality :locality_id (:id l))}
+                (:lname l)]
+               [:span.chip (:species_count l) " species"]])])
+
+         "species"
+         (when (not-empty (:species @state))
+           [:ul
+            (for [s (:species @state)]
+              [:li {:key (str "species-" (:id s))}
+               [:a {:href "#"}
+                (:local_name s)]
+               [:span.ml1 (:cname s)]])])
+
+         nil)])))
 
 (defn home-panel []
   [:div

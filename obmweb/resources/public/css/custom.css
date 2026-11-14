@@ -1,6 +1,41 @@
 header {
 }
 
+/* small pill for counts (replaces blueprint Tag) */
+.chip {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 10px;
+  border-radius: 999px;
+  background-color: #edf1f5;
+  color: #404854;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* striped data table (replaces blueprint html-table) */
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+table.data-table th,
+table.data-table td {
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid #e3e8ee;
+}
+
+table.data-table thead th {
+  background-color: #f2f5f8;
+  font-weight: 600;
+}
+
+table.data-table tbody tr:nth-child(even) {
+  background-color: #f7f9fb;
+}
+
 footer {
   border-top: 1px #d8e1e8 solid;
 }
@@ -94,7 +129,7 @@ footer {
     z-index: 2001;
   }
 
-  div.bp6-navbar-group:last-of-type {
+  .nav-end {
     display: none;
   }
 }

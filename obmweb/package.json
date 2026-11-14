@@ -2,15 +2,14 @@
 	"name": "obmweb",
 	"scripts": {
 		"ancient": "clojure -Sdeps '{:deps {com.github.liquidz/antq {:mvn/version \"RELEASE\"}}}' -m antq.core",
-		"watch": "npx shadow-cljs watch app browser-test karma-test",
-		"release": "npx shadow-cljs release app",
+		"copy-vendor-css": "node scripts/copy-vendor-css.mjs",
+		"watch": "npm run copy-vendor-css && npx shadow-cljs watch app browser-test karma-test",
+		"release": "npm run copy-vendor-css && npx shadow-cljs release app",
 		"build-report": "npx shadow-cljs run shadow.cljs.build-report app target/build-report.html"
 	},
 	"dependencies": {
 		"@astryxdesign/core": "^0.7.15",
 		"@astryxdesign/theme-neutral": "^0.7.15",
-		"@blueprintjs/core": "^6.20.0",
-		"@blueprintjs/select": "^6.3.6",
 		"@stylexjs/stylex": "^0.19.2",
 		"chart.js": "4.5.1",
 		"highlight.js": "11.12.0",
