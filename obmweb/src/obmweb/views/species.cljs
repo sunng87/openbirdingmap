@@ -8,6 +8,7 @@
             ["@astryxdesign/core/Card" :as ax-card]
             ["@astryxdesign/core/Collapsible" :as ax-collapsible]
             ["@astryxdesign/core/Heading" :as ax-heading]
+            ["@astryxdesign/core/Lightbox" :as ax-lightbox]
             ["@astryxdesign/core/Skeleton" :as ax-skeleton]
             ["@astryxdesign/core/Spinner" :as ax-spinner]
             [goog.string :as gstring]
@@ -68,53 +69,65 @@
           [:div.overflow-auto.mt1
            [:img.pr1.pl1 {:src (-> audio :sono :full) :alt "sono"}]]]]))))
 
-(defn- image-carousel [images]
+(defn- photo-credits
+  "Credit bar for one photo; used both inline and as the Lightbox caption."
+  [image n i]
+  [:div.photo-label-bar
+   [:div
+    (when (not-empty (:title image))
+      [:div.photo-label-title (:title image)])
+    [:div.photo-label-attr
+     "© "
+     [:b (:author image)]
+     " "
+     (:state image) ", " (:country image)
+     " | "
+     [:a {:target "_blank" :href (:link image)}
+      (:citation image)]]]
+   [:span.photo-label-counter (str (inc i) " / " n)]])
+
+(defn- image-gallery [images]
   (let [idx (r/atom 0)
-        ;; the src that has finished loading; any other image shows a skeleton
-        loaded-src (r/atom nil)]
+        ;; srcs that have finished loading; any other image shows a skeleton
+        loaded-srcs (r/atom #{})
+        open? (r/atom false)
+        open! #(reset! open? true)]
     (fn [images]
       (let [n (count images)
             i (-> @idx (min (dec n)) (max 0))
-            image (nth images i nil)]
+            image (nth images i nil)
+            loaded? (contains? @loaded-srcs (:src image))]
         (when image
-          (let [loaded? (= @loaded-src (:src image))]
-            [:div
-             [:div.flex.items-center
-              [:> ax-button/Button
-               {:label "Previous photo"
-                :isIconOnly true
-                :variant "ghost"
-                :isDisabled (zero? i)
-                :icon (r/as-element [:> lucide/ChevronLeft {:size 20 :aria-hidden true}])
-                :on-click #(swap! idx dec)}]
-              [:div.flex-auto
-               [:div.photo-frame
-                (when-not loaded?
-                  [:> ax-skeleton/Skeleton {:className "photo-skeleton"}])
-                [:img.fit {:src (:src image)
-                           :alt (:alt image)
-                           :style (when-not loaded? {:display "none"})
-                           :on-load #(reset! loaded-src (:src image))}]
-                [:div.photo-label-bar
-                 [:div
-                  (when (not-empty (:title image))
-                    [:div.photo-label-title (:title image)])
-                  [:div.photo-label-attr
-                   "© "
-                   [:b (:author image)]
-                   " "
-                   (:state image) ", " (:country image)
-                   " | "
-                   [:a {:target "_blank" :href (:link image)}
-                    (:citation image)]]]
-                 [:span.photo-label-counter (str (inc i) " / " n)]]]]
-              [:> ax-button/Button
-               {:label "Next photo"
-                :isIconOnly true
-                :variant "ghost"
-                :isDisabled (= i (dec n))
-                :icon (r/as-element [:> lucide/ChevronRight {:size 20 :aria-hidden true}])
-                :on-click #(swap! idx inc)}]]]))))))
+          [:div
+           ;; inline frame: current photo + credits; opens the gallery
+           [:div.photo-frame {:role "button"
+                              :tab-index 0
+                              :aria-label "Open photo gallery"
+                              :on-click open!
+                              :on-key-down #(when (contains? #{"Enter" " "} (.-key %))
+                                              (.preventDefault %)
+                                              (open!))}
+            (when-not loaded?
+              [:> ax-skeleton/Skeleton {:className "photo-skeleton"}])
+            [:img.fit {:src (:src image)
+                       :alt (:alt image)
+                       :style (when-not loaded? {:display "none"})
+                       :on-load #(swap! loaded-srcs conj (:src image))}]
+            [photo-credits image n i]]
+           ;; astryx Lightbox provides prev/next, arrow keys and swipe
+           [:> ax-lightbox/Lightbox
+            {:aria-label "Species photos"
+             :isOpen @open?
+             :onOpenChange #(reset! open? %)
+             :index i
+             :onIndexChange #(reset! idx %)
+             :media (clj->js
+                     (map-indexed (fn [j img]
+                                    {:src (:src img)
+                                     :alt (:alt img)
+                                     :caption (r/as-element [photo-credits img n j])})
+                                  images))}]])))))
+
 
 (defn- current-week []
   (let [today (js/Date.)
@@ -181,7 +194,7 @@
           [:p "No photos available."]
 
           :else
-          [image-carousel (:images media)])]
+          [image-gallery (:images media)])]
 
        [section "Sounds"
         (cond
